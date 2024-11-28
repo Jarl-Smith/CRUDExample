@@ -1,6 +1,7 @@
 ﻿using Entities;
 using ServciceContracts;
 using ServciceContracts.DataTransferObject;
+using Services.Helpers;
 
 namespace Services {
     public class PersonService : IPersonService {
@@ -13,7 +14,9 @@ namespace Services {
 
         public PersonResponse AddPerson(PersonAddRequest? personAddRequest) {
             if(personAddRequest == null) throw new ArgumentNullException(nameof(personAddRequest));
-            if(string.IsNullOrEmpty(personAddRequest.PersonName)) throw new ArgumentException("PersonName should not be blank");
+            //Model validations
+            ValidationHelper.ModelValidation(personAddRequest);
+
             Person person = personAddRequest.ToPerson();
             person.PersonID = Guid.NewGuid();
             _person.Add(person);
@@ -21,11 +24,11 @@ namespace Services {
         }
 
         public List<PersonResponse> GetAllPerson() {
-            throw new NotImplementedException();
+            return _person.Select(person => person.ToPersonResponse()).ToList();
         }
 
         public PersonResponse? GetPersonByPersonID(Guid? guid) {
-            throw new NotImplementedException();
+            return guid != null ? _person.Where(person => person.PersonID == guid).FirstOrDefault()?.ToPersonResponse() : null;
         }
 
         private PersonResponse convertPersonToPersonResponse(Person person) {
