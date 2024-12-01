@@ -1,15 +1,24 @@
 ﻿using Entities;
 using ServciceContracts;
 using ServciceContracts.DataTransferObject;
+using ServiceContracts.Enums;
 using Services.Helpers;
 
 namespace Services {
     public class PersonService : IPersonService {
+
         private readonly List<Person> _person;
         private readonly ICountryService _countryService;
+
         public PersonService() {
             _person = new List<Person>();
             _countryService = new CountryService();
+        }
+
+        private PersonResponse convertPersonToPersonResponse(Person person) {
+            PersonResponse personResponse = person.ToPersonResponse();
+            personResponse.Country = _countryService.GetCountryByCountryID(personResponse.CountryID)?.CountryName;
+            return personResponse;
         }
 
         public PersonResponse AddPerson(PersonAddRequest? personAddRequest) {
@@ -73,10 +82,9 @@ namespace Services {
             return guid != null ? _person.Where(person => person.PersonID == guid).FirstOrDefault()?.ToPersonResponse() : null;
         }
 
-        private PersonResponse convertPersonToPersonResponse(Person person) {
-            PersonResponse personResponse = person.ToPersonResponse();
-            personResponse.Country = _countryService.GetCountryByCountryID(personResponse.CountryID)?.CountryName;
-            return personResponse;
+        public List<PersonResponse> GetSortedPerson(List<PersonResponse> allPerson, string sortBy, SortOrderOption sortOrderOption) {
+            throw new NotImplementedException();
         }
+
     }
 }
