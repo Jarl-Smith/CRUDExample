@@ -6,6 +6,7 @@ namespace ServciceContracts {
         List<PersonResponse> GetAllPerson();
 
         PersonResponse? GetPersonByPersonID(Guid? guid);
+        List<PersonResponse> GetFilterPerson(string searchBy, string? searchString);
 
     }
 }

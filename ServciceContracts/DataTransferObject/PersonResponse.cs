@@ -13,6 +13,14 @@ namespace ServciceContracts.DataTransferObject {
         public string? Address { get; set; }
         public bool ReceiveNewsLetters { get; set; }
         public double? Age { get; set; }
+
+        public override bool Equals(object? obj) {
+            if(obj.GetType() != typeof(PersonResponse)) {
+                return false;
+            }
+            PersonResponse person = (PersonResponse)obj;
+            return person.PersonID == this.PersonID && person.PersonName == this.PersonName && person.Email == this.Email && person.DateOfBirth == this.DateOfBirth && person.Gender == this.Gender && person.CountryID == this.CountryID && person.Country == this.Country && person.Address == this.Address && person.ReceiveNewsLetters == this.ReceiveNewsLetters && person.Age == this.Age;
+        }
     }
 
     public static class PersonExtensions {
