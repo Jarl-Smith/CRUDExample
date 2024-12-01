@@ -4,16 +4,19 @@ using Services;
 using ServciceContracts.DataTransferObject;
 using Entities;
 using System.Net;
+using Xunit.Abstractions;
 
 namespace CRUDTests {
     public class PersonServiceTest {
 
         private readonly IPersonService _personService;
         private readonly ICountryService _countryService;
+        private readonly ITestOutputHelper _testOutputHelper;
 
-        public PersonServiceTest() {
+        public PersonServiceTest(ITestOutputHelper testOutputHelper) {
             _personService = new PersonService();
             _countryService = new CountryService();
+            _testOutputHelper = testOutputHelper;
         }
         #region AddPerson
         [Fact]
@@ -105,7 +108,13 @@ namespace CRUDTests {
             //Arrange
             List<PersonResponse> personResponses_from_add = addFewPerson();
             //Act
-            List<PersonResponse> personResponses_from_get = _personService.GetFilterPerson(nameof(Person.PersonName), "ma");
+            List<PersonResponse> personResponses_from_get = _personService.GetFilterPerson(nameof(Person.PersonName), "a");
+            foreach(PersonResponse personResponse in personResponses_from_get) {
+                _testOutputHelper.WriteLine($"{personResponse.PersonName}");
+            }
+
+
+
             //Assert
             foreach(PersonResponse response in personResponses_from_get) {
                 Assert.Contains(response, personResponses_from_get);
