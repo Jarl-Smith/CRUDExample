@@ -1,6 +1,7 @@
 ﻿using Entities;
 using ServciceContracts;
 using ServciceContracts.DataTransferObject;
+using ServiceContracts.DataTransferObject;
 using ServiceContracts.Enums;
 using Services.Helpers;
 
@@ -104,6 +105,23 @@ namespace Services {
                 _ => allPerson
             };
             return sortPerson;
+        }
+
+        public PersonResponse UpdatePerson(PersonUpdateRequest? personUpdateRequest) {
+            if(personUpdateRequest == null) { throw new ArgumentNullException(nameof(personUpdateRequest)); }
+            ValidationHelper.ModelValidation(personUpdateRequest);
+
+            Person? matchingPerson = _person.FirstOrDefault(temp => temp.PersonID == personUpdateRequest.PersonID);
+            if(matchingPerson == null) { throw new ArgumentException("Given id doesn't exist"); }
+            //Update all details
+            matchingPerson.PersonName = personUpdateRequest.PersonName;
+            matchingPerson.Email = personUpdateRequest.Email;
+            matchingPerson.DateOfBirth = personUpdateRequest.DateOfBirth;
+            matchingPerson.Gender = personUpdateRequest.Gender.ToString();
+            matchingPerson.CountryID = personUpdateRequest.CountryID;
+            matchingPerson.Address = personUpdateRequest.Address;
+            matchingPerson.ReceiveNewsLetters = personUpdateRequest.ReceiveNewsLetters;
+            return matchingPerson.ToPersonResponse();
         }
     }
 }

@@ -6,6 +6,7 @@ using Entities;
 using System.Net;
 using Xunit.Abstractions;
 using ServiceContracts.Enums;
+using ServiceContracts.DataTransferObject;
 
 namespace CRUDTests {
     public class PersonServiceTest {
@@ -113,9 +114,6 @@ namespace CRUDTests {
             foreach(PersonResponse personResponse in personResponses_from_get) {
                 _testOutputHelper.WriteLine($"{personResponse.PersonName}");
             }
-
-
-
             //Assert
             foreach(PersonResponse response in personResponses_from_get) {
                 Assert.Contains(response, personResponses_from_get);
@@ -139,6 +137,53 @@ namespace CRUDTests {
         }
         #endregion
 
+        #region UpdatePerson
+        [Fact]
+        public void UpdatePerson_NullPersonUpdateRequest() {
+            //Arrange
+            PersonUpdateRequest? personUpdateRequest = null;
+            //Assert
+            Assert.Throws<ArgumentNullException>(() => {
+                //Act
+                _personService.UpdatePerson(personUpdateRequest);
+            });
+        }
+        [Fact]
+        public void UpdatePerson_InvalidPersonID() {
+            //Arrange
+            PersonUpdateRequest? personUpdateRequest = new PersonUpdateRequest() { PersonID = Guid.NewGuid() };
+            //Assert
+            Assert.Throws<ArgumentException>(() => {
+                //Act
+                _personService.UpdatePerson(personUpdateRequest);
+            });
+        }
+        [Fact]
+        public void UpdatePerson_EmptyPersonName() {
+            //Arrange
+            List<PersonResponse> personResponses = addFewPerson();
+            PersonUpdateRequest personUpdateRequest = personResponses[0].ToPersonUpdateRequest();
+            personUpdateRequest.PersonName = "";
+
+            //Assert
+            Assert.Throws<ArgumentException>(() => {
+                //Act
+                _personService.UpdatePerson(personUpdateRequest);
+            });
+        }
+        [Fact]
+        public void UpdatePerson_PersonFullDetailUpdate() {
+            //Arrange
+            List<PersonResponse> personResponses = addFewPerson();
+            PersonUpdateRequest personUpdateRequest = personResponses[0].ToPersonUpdateRequest();
+            personUpdateRequest.PersonName = "asdqwezxc";
+            //Act
+            PersonResponse person_from_update = _personService.UpdatePerson(personUpdateRequest);
+            PersonResponse person_from_get = _personService.GetPersonByPersonID(person_from_update.PersonID);
+            //Assert
+            Assert.Equal(person_from_update, person_from_get);
+        }
+        #endregion
 
         private List<PersonResponse> addFewPerson() {
             CountryAddRequest countryAddRequest = new CountryAddRequest() { CountryName = "China" };

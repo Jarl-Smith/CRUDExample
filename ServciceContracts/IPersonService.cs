@@ -1,5 +1,6 @@
 ﻿using ServciceContracts.DataTransferObject;
 using ServciceContracts.Enums;
+using ServiceContracts.DataTransferObject;
 using ServiceContracts.Enums;
 
 namespace ServciceContracts {
@@ -9,6 +10,7 @@ namespace ServciceContracts {
         PersonResponse? GetPersonByPersonID(Guid? guid);
         List<PersonResponse> GetFilterPerson(string searchBy, string? searchString);
         List<PersonResponse> GetSortedPerson(List<PersonResponse> allPerson, string sortBy, SortOrderOption sortOrderOption);
+        PersonResponse UpdatePerson(PersonUpdateRequest? personUpdateRequest);
 
     }
 }

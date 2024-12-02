@@ -1,5 +1,6 @@
-﻿
-using Entities;
+﻿using Entities;
+using ServciceContracts.Enums;
+using ServiceContracts.DataTransferObject;
 
 namespace ServciceContracts.DataTransferObject {
     public class PersonResponse {
@@ -20,6 +21,14 @@ namespace ServciceContracts.DataTransferObject {
             }
             PersonResponse person = (PersonResponse)obj;
             return person.PersonID == this.PersonID && person.PersonName == this.PersonName && person.Email == this.Email && person.DateOfBirth == this.DateOfBirth && person.Gender == this.Gender && person.CountryID == this.CountryID && person.Country == this.Country && person.Address == this.Address && person.ReceiveNewsLetters == this.ReceiveNewsLetters && person.Age == this.Age;
+        }
+
+        public override int GetHashCode() {
+            return base.GetHashCode();
+        }
+
+        public PersonUpdateRequest ToPersonUpdateRequest() {
+            return new PersonUpdateRequest() { PersonID = this.PersonID, PersonName = this.PersonName, Email = this.Email, DateOfBirth = this.DateOfBirth, Gender = (GenderOptions)Enum.Parse(typeof(GenderOptions), Gender, true), CountryID = this.CountryID, Address = this.Address, ReceiveNewsLetters = this.ReceiveNewsLetters };
         }
     }
 
