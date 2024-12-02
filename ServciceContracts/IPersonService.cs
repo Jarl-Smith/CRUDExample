@@ -11,6 +11,6 @@ namespace ServciceContracts {
         List<PersonResponse> GetFilterPerson(string searchBy, string? searchString);
         List<PersonResponse> GetSortedPerson(List<PersonResponse> allPerson, string sortBy, SortOrderOption sortOrderOption);
         PersonResponse UpdatePerson(PersonUpdateRequest? personUpdateRequest);
-
+        bool DeletePersonByID(Guid? guid);
     }
 }

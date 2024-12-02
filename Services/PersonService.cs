@@ -123,5 +123,12 @@ namespace Services {
             matchingPerson.ReceiveNewsLetters = personUpdateRequest.ReceiveNewsLetters;
             return matchingPerson.ToPersonResponse();
         }
+
+        public bool DeletePersonByID(Guid? guid) {
+            if(guid == null) { throw new ArgumentNullException(nameof(guid)); }
+            Person? matchingPerson = _person.FirstOrDefault(temp => temp.PersonID == guid);
+            if(matchingPerson == null) { return false; }
+            return _person.Remove(matchingPerson);
+        }
     }
 }

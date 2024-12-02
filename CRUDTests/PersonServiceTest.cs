@@ -185,6 +185,27 @@ namespace CRUDTests {
         }
         #endregion
 
+        #region DeletePerson
+        [Fact]
+        public void DeletePersonByID_InvalidPersonID() {
+            //Arrange
+            List<PersonResponse> personResponses = addFewPerson();
+            //Act
+            bool isDeleted = _personService.DeletePersonByID(Guid.NewGuid());
+            //Assert
+            Assert.False(isDeleted);
+        }
+        [Fact]
+        public void DeletePersonByID_ValidPersonID() {
+            //Arrange
+            List<PersonResponse> personResponses = addFewPerson();
+            //Act
+            bool isDeleted = _personService.DeletePersonByID(personResponses[0].PersonID);
+            //Assert
+            Assert.True(isDeleted);
+        }
+        #endregion
+
         private List<PersonResponse> addFewPerson() {
             CountryAddRequest countryAddRequest = new CountryAddRequest() { CountryName = "China" };
             CountryResponse countryResponse = _countryService.AddCountry(countryAddRequest);
