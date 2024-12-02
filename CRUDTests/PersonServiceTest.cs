@@ -5,6 +5,7 @@ using ServciceContracts.DataTransferObject;
 using Entities;
 using System.Net;
 using Xunit.Abstractions;
+using ServiceContracts.Enums;
 
 namespace CRUDTests {
     public class PersonServiceTest {
@@ -122,13 +123,29 @@ namespace CRUDTests {
         }
         #endregion
 
+        #region GetSortedPerson
+        [Fact]
+        public void GetSortedPerson_() {
+            //Arrange
+            List<PersonResponse> person_from_add = addFewPerson();
+            //Act
+            List<PersonResponse> person_from_sort = _personService.GetSortedPerson(_personService.GetAllPerson(), nameof(Person.DateOfBirth), SortOrderOption.DESC);
+            List<PersonResponse> person_from_test_sort = person_from_add.OrderByDescending(temp => temp.DateOfBirth).ToList();
+            //Assert
+            for(int i = 0; i < person_from_test_sort.Count; i++) {
+                _testOutputHelper.WriteLine($"{person_from_sort[i].PersonName}  {person_from_sort[i].DateOfBirth.Value.ToString("dd MMMM yyyy")}");
+                Assert.Equal(person_from_test_sort[i], person_from_sort[i]);
+            }
+        }
+        #endregion
+
 
         private List<PersonResponse> addFewPerson() {
             CountryAddRequest countryAddRequest = new CountryAddRequest() { CountryName = "China" };
             CountryResponse countryResponse = _countryService.AddCountry(countryAddRequest);
             PersonAddRequest personAddRequest = new PersonAddRequest() { PersonName = "Smith", Email = "123456@123.com", DateOfBirth = DateTime.Parse("2000-01-01"), Gender = GenderOptions.Male, CountryID = countryResponse.CountryID, Address = "qwe", ReceiveNewsLetters = true };
-            PersonAddRequest personAddRequest2 = new PersonAddRequest() { PersonName = "Jack", Email = "123456@123.com", DateOfBirth = DateTime.Parse("1996-01-01"), Gender = GenderOptions.Male, CountryID = countryResponse.CountryID, Address = "qwe", ReceiveNewsLetters = true };
-            PersonAddRequest personAddRequest3 = new PersonAddRequest() { PersonName = "Alice", Email = "123456@123.com", DateOfBirth = DateTime.Parse("995-01-01"), Gender = GenderOptions.Female, CountryID = countryResponse.CountryID, Address = "qwe", ReceiveNewsLetters = true };
+            PersonAddRequest personAddRequest2 = new PersonAddRequest() { PersonName = "Jack", Email = "123456@123.com", DateOfBirth = DateTime.Parse("1994-01-01"), Gender = GenderOptions.Male, CountryID = countryResponse.CountryID, Address = "qwe", ReceiveNewsLetters = false };
+            PersonAddRequest personAddRequest3 = new PersonAddRequest() { PersonName = "Alice", Email = "123456@123.com", DateOfBirth = DateTime.Parse("1995-01-01"), Gender = GenderOptions.Female, CountryID = countryResponse.CountryID, Address = "qwe", ReceiveNewsLetters = true };
             List<PersonResponse> personResponses =
             [
                 _personService.AddPerson(personAddRequest),

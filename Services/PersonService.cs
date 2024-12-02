@@ -83,8 +83,48 @@ namespace Services {
         }
 
         public List<PersonResponse> GetSortedPerson(List<PersonResponse> allPerson, string sortBy, SortOrderOption sortOrderOption) {
-            throw new NotImplementedException();
+            if(string.IsNullOrEmpty(sortBy)) { return allPerson; }
+            List<PersonResponse> sortPerson = allPerson;
+            switch(sortBy) {
+                case nameof(Person.PersonName):
+                    if(sortOrderOption == SortOrderOption.DESC) {
+                        sortPerson = sortPerson.OrderByDescending(temp => temp.PersonName).ToList();
+                    } else {
+                        sortPerson = sortPerson.OrderBy(temp => temp.PersonName).ToList();
+                    }
+                    break;
+                case nameof(Person.Email):
+                    if(sortOrderOption == SortOrderOption.DESC) {
+                        sortPerson = sortPerson.OrderByDescending(temp => temp.Email).ToList();
+                    } else {
+                        sortPerson = sortPerson.OrderBy(temp => temp.Email).ToList();
+                    }
+                    break;
+                case nameof(Person.Address):
+                    if(sortOrderOption == SortOrderOption.DESC) {
+                        sortPerson = sortPerson.OrderByDescending(temp => temp.Address).ToList();
+                    } else {
+                        sortPerson = sortPerson.OrderBy(temp => temp.Address).ToList();
+                    }
+                    break;
+                case nameof(Person.DateOfBirth):
+                    if(sortOrderOption == SortOrderOption.DESC) {
+                        sortPerson = sortPerson.OrderByDescending(temp => temp.DateOfBirth).ToList();
+                    } else {
+                        sortPerson = sortPerson.OrderBy(temp => temp.DateOfBirth).ToList();
+                    }
+                    break;
+                case nameof(Person.ReceiveNewsLetters):
+                    if(sortOrderOption == SortOrderOption.DESC) {
+                        sortPerson = sortPerson.OrderByDescending(temp => temp.ReceiveNewsLetters).ToList();
+                    } else {
+                        sortPerson = sortPerson.OrderBy(temp => temp.ReceiveNewsLetters).ToList();
+                    }
+                    break;
+                default:
+                    break;
+            }
+            return sortPerson;
         }
-
     }
 }
