@@ -129,7 +129,7 @@ namespace CRUDTests {
             //Arrange
             List<PersonResponse> person_from_add = addFewPerson();
             //Act
-            List<PersonResponse> person_from_sort = _personService.GetSortedPerson(_personService.GetAllPerson(), nameof(Person.DateOfBirth), SortOrderOption.DESC);
+            List<PersonResponse> person_from_sort = _personService.GetSortedPerson(_personService.GetAllPerson(), nameof(PersonResponse.DateOfBirth), SortOrderOption.DESC);
             List<PersonResponse> person_from_test_sort = person_from_add.OrderByDescending(temp => temp.DateOfBirth).ToList();
             //Assert
             for(int i = 0; i < person_from_test_sort.Count; i++) {

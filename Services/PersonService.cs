@@ -83,47 +83,26 @@ namespace Services {
         }
 
         public List<PersonResponse> GetSortedPerson(List<PersonResponse> allPerson, string sortBy, SortOrderOption sortOrderOption) {
-            if(string.IsNullOrEmpty(sortBy)) { return allPerson; }
-            List<PersonResponse> sortPerson = allPerson;
-            switch(sortBy) {
-                case nameof(Person.PersonName):
-                    if(sortOrderOption == SortOrderOption.DESC) {
-                        sortPerson = sortPerson.OrderByDescending(temp => temp.PersonName).ToList();
-                    } else {
-                        sortPerson = sortPerson.OrderBy(temp => temp.PersonName).ToList();
-                    }
-                    break;
-                case nameof(Person.Email):
-                    if(sortOrderOption == SortOrderOption.DESC) {
-                        sortPerson = sortPerson.OrderByDescending(temp => temp.Email).ToList();
-                    } else {
-                        sortPerson = sortPerson.OrderBy(temp => temp.Email).ToList();
-                    }
-                    break;
-                case nameof(Person.Address):
-                    if(sortOrderOption == SortOrderOption.DESC) {
-                        sortPerson = sortPerson.OrderByDescending(temp => temp.Address).ToList();
-                    } else {
-                        sortPerson = sortPerson.OrderBy(temp => temp.Address).ToList();
-                    }
-                    break;
-                case nameof(Person.DateOfBirth):
-                    if(sortOrderOption == SortOrderOption.DESC) {
-                        sortPerson = sortPerson.OrderByDescending(temp => temp.DateOfBirth).ToList();
-                    } else {
-                        sortPerson = sortPerson.OrderBy(temp => temp.DateOfBirth).ToList();
-                    }
-                    break;
-                case nameof(Person.ReceiveNewsLetters):
-                    if(sortOrderOption == SortOrderOption.DESC) {
-                        sortPerson = sortPerson.OrderByDescending(temp => temp.ReceiveNewsLetters).ToList();
-                    } else {
-                        sortPerson = sortPerson.OrderBy(temp => temp.ReceiveNewsLetters).ToList();
-                    }
-                    break;
-                default:
-                    break;
-            }
+            List<PersonResponse> sortPerson = (sortBy, sortOrderOption)
+            switch {
+                (nameof(PersonResponse.PersonName), SortOrderOption.ASC) => allPerson.OrderBy(temp => temp.PersonName, StringComparer.OrdinalIgnoreCase).ToList(),
+                (nameof(PersonResponse.PersonName), SortOrderOption.DESC) => allPerson.OrderByDescending(temp => temp.PersonName, StringComparer.OrdinalIgnoreCase).ToList(),
+                (nameof(PersonResponse.Email), SortOrderOption.ASC) => allPerson.OrderBy(temp => temp.Email, StringComparer.OrdinalIgnoreCase).ToList(),
+                (nameof(PersonResponse.Email), SortOrderOption.DESC) => allPerson.OrderByDescending(temp => temp.Email, StringComparer.OrdinalIgnoreCase).ToList(),
+                (nameof(PersonResponse.DateOfBirth), SortOrderOption.ASC) => allPerson.OrderBy(temp => temp.DateOfBirth).ToList(),
+                (nameof(PersonResponse.DateOfBirth), SortOrderOption.DESC) => allPerson.OrderByDescending(temp => temp.DateOfBirth).ToList(),
+                (nameof(PersonResponse.Gender), SortOrderOption.ASC) => allPerson.OrderBy(temp => temp.Gender, StringComparer.OrdinalIgnoreCase).ToList(),
+                (nameof(PersonResponse.Gender), SortOrderOption.DESC) => allPerson.OrderByDescending(temp => temp.Gender, StringComparer.OrdinalIgnoreCase).ToList(),
+                (nameof(PersonResponse.Country), SortOrderOption.ASC) => allPerson.OrderBy(temp => temp.Country, StringComparer.OrdinalIgnoreCase).ToList(),
+                (nameof(PersonResponse.Country), SortOrderOption.DESC) => allPerson.OrderByDescending(temp => temp.Country, StringComparer.OrdinalIgnoreCase).ToList(),
+                (nameof(PersonResponse.Address), SortOrderOption.ASC) => allPerson.OrderBy(temp => temp.Address, StringComparer.OrdinalIgnoreCase).ToList(),
+                (nameof(PersonResponse.Address), SortOrderOption.DESC) => allPerson.OrderByDescending(temp => temp.Address, StringComparer.OrdinalIgnoreCase).ToList(),
+                (nameof(PersonResponse.ReceiveNewsLetters), SortOrderOption.ASC) => allPerson.OrderBy(temp => temp.ReceiveNewsLetters).ToList(),
+                (nameof(PersonResponse.ReceiveNewsLetters), SortOrderOption.DESC) => allPerson.OrderByDescending(temp => temp.ReceiveNewsLetters).ToList(),
+                (nameof(PersonResponse.Age), SortOrderOption.ASC) => allPerson.OrderBy(temp => temp.Age).ToList(),
+                (nameof(PersonResponse.Age), SortOrderOption.DESC) => allPerson.OrderByDescending(temp => temp.Age).ToList(),
+                _ => allPerson
+            };
             return sortPerson;
         }
     }
