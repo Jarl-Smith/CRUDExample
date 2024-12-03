@@ -1,6 +1,6 @@
 ﻿using Entities;
 
-namespace ServciceContracts.DataTransferObject {
+namespace ServiceContracts.DataTransferObject {
     public class CountryAddRequest {
         public string? CountryName { get; set; }
 

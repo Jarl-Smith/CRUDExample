@@ -1,6 +1,6 @@
-﻿using ServciceContracts.DataTransferObject;
+﻿using ServiceContracts.DataTransferObject;
 
-namespace ServciceContracts {
+namespace ServiceContracts {
     public interface ICountryService {
         CountryResponse AddCountry(CountryAddRequest? countryAddRequest);
         List<CountryResponse> GetAllCountries();

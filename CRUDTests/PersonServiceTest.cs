@@ -1,9 +1,7 @@
-﻿using ServciceContracts;
-using ServciceContracts.Enums;
+﻿using ServiceContracts;
+using ServiceContracts.Enums;
 using Services;
-using ServciceContracts.DataTransferObject;
-using Entities;
-using System.Net;
+using ServiceContracts.DataTransferObject;
 using Xunit.Abstractions;
 using ServiceContracts.Enums;
 using ServiceContracts.DataTransferObject;
@@ -99,7 +97,7 @@ namespace CRUDTests {
             //Arrange
             List<PersonResponse> personResponses_from_add = addFewPerson();
             //Act
-            List<PersonResponse> personResponses_from_get = _personService.GetFilterPerson(nameof(Person.PersonName), "");
+            List<PersonResponse> personResponses_from_get = _personService.GetFilterPerson(nameof(PersonResponse.PersonName), "");
             //Assert
             foreach(PersonResponse response in personResponses_from_add) {
                 Assert.Contains(response, personResponses_from_get);
@@ -110,7 +108,7 @@ namespace CRUDTests {
             //Arrange
             List<PersonResponse> personResponses_from_add = addFewPerson();
             //Act
-            List<PersonResponse> personResponses_from_get = _personService.GetFilterPerson(nameof(Person.PersonName), "a");
+            List<PersonResponse> personResponses_from_get = _personService.GetFilterPerson(nameof(PersonResponse.PersonName), "a");
             foreach(PersonResponse personResponse in personResponses_from_get) {
                 _testOutputHelper.WriteLine($"{personResponse.PersonName}");
             }

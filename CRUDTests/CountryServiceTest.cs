@@ -1,8 +1,8 @@
 using Xunit;
-using ServciceContracts;
+using ServiceContracts;
 using Entities;
 using Services;
-using ServciceContracts.DataTransferObject;
+using ServiceContracts.DataTransferObject;
 
 
 namespace CRUDTests {

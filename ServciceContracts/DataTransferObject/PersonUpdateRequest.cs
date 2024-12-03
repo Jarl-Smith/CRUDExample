@@ -1,5 +1,5 @@
 ﻿using Entities;
-using ServciceContracts.Enums;
+using ServiceContracts.Enums;
 using System.ComponentModel.DataAnnotations;
 
 

@@ -1,8 +1,7 @@
 ﻿using Entities;
-using ServciceContracts.Enums;
-using ServiceContracts.DataTransferObject;
+using ServiceContracts.Enums;
 
-namespace ServciceContracts.DataTransferObject {
+namespace ServiceContracts.DataTransferObject {
     public class PersonResponse {
         public Guid PersonID { get; set; }
         public string? PersonName { get; set; }

@@ -1,6 +1,6 @@
 ﻿using Entities;
-using ServciceContracts;
-using ServciceContracts.DataTransferObject;
+using ServiceContracts;
+using ServiceContracts.DataTransferObject;
 
 namespace Services {
     public class CountryService : ICountryService {

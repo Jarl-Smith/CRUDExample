@@ -1,9 +1,9 @@
 ﻿using Entities;
-using ServciceContracts;
-using ServciceContracts.DataTransferObject;
+using ServiceContracts;
 using ServiceContracts.DataTransferObject;
 using ServiceContracts.Enums;
 using Services.Helpers;
+using System.Text.Json;
 
 namespace Services {
     public class PersonService : IPersonService {
@@ -12,8 +12,11 @@ namespace Services {
         private readonly ICountryService _countryService;
 
         public PersonService() {
-            _person = new List<Person>();
+            //_person = new List<Person>();
             _countryService = new CountryService();
+            string fileName = "mockdata.json";
+            string jsonString = File.ReadAllText(Path.Combine(Directory.GetCurrentDirectory(), fileName));
+            _person = JsonSerializer.Deserialize<List<Person>>(jsonString);
         }
 
         private PersonResponse convertPersonToPersonResponse(Person person) {
@@ -43,7 +46,7 @@ namespace Services {
             if(string.IsNullOrEmpty(searchBy) || string.IsNullOrEmpty(searchString)) { return allPerson; }
 
             switch(searchBy) {
-                case nameof(Person.PersonName):
+                case nameof(PersonResponse.PersonName):
                     matchingPerson = allPerson.Where(
                         (person) => {
                             if(string.IsNullOrEmpty(person.PersonName)) {
@@ -53,7 +56,7 @@ namespace Services {
                             }
                         }).ToList();
                     break;
-                case nameof(Person.Email):
+                case nameof(PersonResponse.Email):
                     matchingPerson = allPerson.Where(
                         (person) => {
                             if(string.IsNullOrEmpty(person.Email)) {
@@ -63,7 +66,7 @@ namespace Services {
                             }
                         }).ToList();
                     break;
-                case nameof(Person.DateOfBirth):
+                case nameof(PersonResponse.DateOfBirth):
                     matchingPerson = allPerson.Where(
                         (person) => {
                             if(person.DateOfBirth == null) {

@@ -1,0 +1,56 @@
+﻿@model IEnumerable<PersonResponse>
+@{
+    ViewBag.Title = "Person";
+}
+<form action="~/person/index" method="get">
+    <h1>Person</h1>
+    <div class="box flex">
+        <div class="flex-1">
+            <select class="form-input" name="searchBy">
+                @foreach (KeyValuePair<string, string> pair in ViewBag.PersonProperty)
+                {
+                    if (ViewBag.CurrentSearchBy == pair.Value)
+                    {
+                        <option value="@pair.Value" selected="selected">@pair.Key</option>
+
+                    }
+                    else
+                    {
+                        <option value="@pair.Value">@pair.Key</option>
+                    }
+                }
+                @*example: searchBy=Email&searchString=123*@
+            </select>
+        </div>
+        <div class="flex-1">
+            <input name="searchString" type="search" class="form-input" placeholder="Search String" value="@ViewBag.CurrentSearchString" />
+        </div>
+        <div class="flex-1">
+            <button class="button button-blue-back" type="submit">Search</button>
+            <a href="~/person/index" class="link-hover">Clear All</a>
+        </div>
+    </div>
+    <table class="table w-100 mt">
+        <thead>
+            @foreach (KeyValuePair<string, string> columnNameAndProperty in ViewBag.PersonProperty)
+            {
+            <th>@columnNameAndProperty.Key</th>
+            }
+        </thead>
+        <tbody>
+            @foreach (PersonResponse personResponse in Model)
+            {
+                <tr>
+                    <td>@personResponse.PersonName</td>
+                    <td>@personResponse.Email</td>
+                    <td>@personResponse.DateOfBirth?.ToString("dd MMM yyyy")</td>
+                    <td>@personResponse.Gender</td>
+                    <td>@personResponse.Country</td>
+                    <td>@personResponse.Address</td>
+                    <td>@personResponse.ReceiveNewsLetters</td>
+                    <td>@personResponse.Age</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</form>

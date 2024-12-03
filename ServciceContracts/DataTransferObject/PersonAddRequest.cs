@@ -1,8 +1,8 @@
 ﻿using Entities;
-using ServciceContracts.Enums;
+using ServiceContracts.Enums;
 using System.ComponentModel.DataAnnotations;
 
-namespace ServciceContracts.DataTransferObject {
+namespace ServiceContracts.DataTransferObject {
     public class PersonAddRequest {
         [Required(ErrorMessage ="PersonName should not be blank")]
         public string? PersonName { get; set; }

@@ -1,9 +1,7 @@
-﻿using ServciceContracts.DataTransferObject;
-using ServciceContracts.Enums;
-using ServiceContracts.DataTransferObject;
+﻿using ServiceContracts.DataTransferObject;
 using ServiceContracts.Enums;
 
-namespace ServciceContracts {
+namespace ServiceContracts {
     public interface IPersonService {
         PersonResponse AddPerson(PersonAddRequest? personAddRequest);
         List<PersonResponse> GetAllPerson();

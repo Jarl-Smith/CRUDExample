@@ -1,5 +1,5 @@
 ﻿using Entities;
-namespace ServciceContracts.DataTransferObject {
+namespace ServiceContracts.DataTransferObject {
     public class CountryResponse {
         public Guid CountryID { get; set; }
         public string? CountryName { get; set; }
