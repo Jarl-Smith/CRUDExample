@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ServiceContracts;
 using ServiceContracts.DataTransferObject;
+using ServiceContracts.Enums;
 
 namespace CRUDExample.Controllers {
     [Controller]
@@ -14,10 +15,12 @@ namespace CRUDExample.Controllers {
 
         [Route("/")]
         [Route("/person/index")]
-        public IActionResult Index(string searchBy, string? searchString) {
+        public IActionResult Index(string searchBy, string? searchString, string sortBy = nameof(PersonResponse.PersonName), SortOrderOption sortOrderOption = SortOrderOption.ASC) {
             ViewBag.CurrentSearchBy = searchBy;
             ViewBag.CurrentSearchString = searchString;
-            ViewBag.PersonProperty = new Dictionary<string, string>() {
+            ViewBag.CurrentSortBy = sortBy;
+            ViewBag.CurrentSortOrderOption = sortOrderOption.ToString();
+            ViewBag.ColumnNameAndProperty = new Dictionary<string, string>() {
                 {"Person Name",nameof(PersonResponse.PersonName) },
                 {"Email", nameof(PersonResponse.Email) },
                 {"Date Of Birth", nameof(PersonResponse.DateOfBirth) },
@@ -28,7 +31,8 @@ namespace CRUDExample.Controllers {
                 {"Age", nameof(PersonResponse.Age) }
             };
             List<PersonResponse> filterPerson = _personService.GetFilterPerson(searchBy, searchString);
-            return View(filterPerson);
+            List<PersonResponse> sortedPerson = _personService.GetSortedPerson(filterPerson, sortBy, sortOrderOption);
+            return View(sortedPerson);
         }
     }
 }
