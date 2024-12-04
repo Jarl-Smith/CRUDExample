@@ -1,0 +1,18 @@
+﻿@using ServiceContracts.Enums
+@if (ViewBag.CurrentSortBy == ViewBag.ColumnName)
+{
+    @if (ViewBag.CurrentSortOrderOption == SortOrderOption.ASC.ToString())
+    {
+        <a href="~/person/index?searchBy=@ViewBag.CurrentSearchBy&searchString=@ViewBag.CurrentSearchString&sortBy=@ViewBag.ColumnName&sortOrderOption=DESC">@ViewBag.DisplayName</a>
+        <i class="fa-solid fa-sort-up"></i>
+    }
+    else
+    {
+        <a href="~/person/index?searchBy=@ViewBag.CurrentSearchBy&searchString=@ViewBag.CurrentSearchString&sortBy=@ViewBag.ColumnName&sortOrderOption=ASC">@ViewBag.DisplayName</a>
+        <i class="fa-solid fa-sort-down"></i>
+    }
+}
+else
+{
+    <a href="~/person/index?searchBy=@ViewBag.CurrentSearchBy&searchString=@ViewBag.CurrentSearchString&sortBy=@ViewBag.ColumnName&sortOrderOption=DESC">@ViewBag.DisplayName</a>
+}

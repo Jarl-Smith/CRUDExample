@@ -1,5 +1,4 @@
-﻿@using ServiceContracts.Enums
-@model IEnumerable<PersonResponse>
+﻿@model IEnumerable<PersonResponse>
 @{
     ViewBag.Title = "Person";
 }
@@ -10,7 +9,7 @@
             <select class="form-input" name="searchBy">
                 @foreach (KeyValuePair<string, string> pair in ViewBag.ColumnNameAndProperty)
                 {
-                    if (ViewBag.CurrentSearchBy == pair.Value)
+                    if (pair.Value == ViewBag.CurrentSearchBy)
                     {
                         <option value="@pair.Value" selected="selected">@pair.Key</option>
 
@@ -33,28 +32,54 @@
     </div>
     <table class="table w-100 mt">
         <thead>
-            @foreach (KeyValuePair<string, string> columnNameAndProperty in ViewBag.ColumnNameAndProperty)
-            {
-            <th>
-                    @if (ViewBag.CurrentSortBy == columnNameAndProperty.Value)
-                    {
-                        @if (ViewBag.CurrentSortOrderOption == nameof(SortOrderOption.ASC))
-                        {
-                        <a href="~/person/index?searchBy=@ViewBag.CurrentSearchBy&searchString=@ViewBag.CurrentSearchString&sortBy=@columnNameAndProperty.Value&sortOrderOption=DESC">@columnNameAndProperty.Key</a>
-                        <i class="fa-solid fa-sort-up"></i>
-                        }
-                        else
-                        {
-                        <a href="~/person/index?searchBy=@ViewBag.CurrentSearchBy&searchString=@ViewBag.CurrentSearchString&sortBy=@columnNameAndProperty.Value&sortOrderOption=ASC">@columnNameAndProperty.Key</a>
-                        <i class="fa-solid fa-sort-down"></i>
-                        }
-                    }
-                    else
-                    {
-                    <a href="~/person/index?searchBy=@ViewBag.CurrentSearchBy&searchString=@ViewBag.CurrentSearchString&sortBy=@columnNameAndProperty.Value&sortOrderOption=DESC">@columnNameAndProperty.Key</a>
-                    }
-            </th>
-            }
+        <th>
+                @await Html.PartialAsync("_GridColumnHeader", new ViewDataDictionary(ViewData){
+            {"ColumnName",nameof(PersonResponse.PersonName)},
+            {"DisplayName","Person Name"}
+            })
+        </th>
+        <th>
+                @await Html.PartialAsync("_GridColumnHeader", new ViewDataDictionary(ViewData){
+            {"ColumnName",nameof(PersonResponse.Email)},
+            {"DisplayName","Email"}
+            })
+        </th>
+        <th>
+                @await Html.PartialAsync("_GridColumnHeader", new ViewDataDictionary(ViewData){
+            {"ColumnName",nameof(PersonResponse.DateOfBirth)},
+            {"DisplayName","Date Of Birth"}
+            })
+        </th>
+        <th>
+                @await Html.PartialAsync("_GridColumnHeader", new ViewDataDictionary(ViewData){
+            {"ColumnName",nameof(PersonResponse.Gender)},
+            {"DisplayName","Gender"}
+            })
+        </th>
+        <th>
+                @await Html.PartialAsync("_GridColumnHeader", new ViewDataDictionary(ViewData){
+            {"ColumnName",nameof(PersonResponse.Country)},
+            {"DisplayName","Country"}
+            })
+        </th>
+        <th>
+                @await Html.PartialAsync("_GridColumnHeader", new ViewDataDictionary(ViewData){
+            {"ColumnName",nameof(PersonResponse.Address)},
+            {"DisplayName","Address"}
+            })
+        </th>
+        <th>
+                @await Html.PartialAsync("_GridColumnHeader", new ViewDataDictionary(ViewData){
+            {"ColumnName",nameof(PersonResponse.ReceiveNewsLetters)},
+            {"DisplayName","Receive News Letters"}
+            })
+        </th>
+        <th>
+                @await Html.PartialAsync("_GridColumnHeader", new ViewDataDictionary(ViewData){
+            {"ColumnName",nameof(PersonResponse.Age)},
+            {"DisplayName","Age"}
+            })
+        </th>
         </thead>
         <tbody>
             @foreach (PersonResponse personResponse in Model)
