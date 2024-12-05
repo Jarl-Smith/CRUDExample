@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using ServiceContracts;
 using ServiceContracts.DataTransferObject;
 using ServiceContracts.Enums;
@@ -8,9 +9,11 @@ namespace CRUDExample.Controllers {
     public class Person : Controller {
 
         private readonly IPersonService _personService;
+        private readonly ICountryService _countryService;
 
-        public Person(IPersonService personService) {
+        public Person(IPersonService personService, ICountryService countryService) {
             _personService = personService;
+            _countryService = countryService;
         }
 
         [Route("/")]
@@ -33,6 +36,25 @@ namespace CRUDExample.Controllers {
             List<PersonResponse> filterPerson = _personService.GetFilterPerson(searchBy, searchString);
             List<PersonResponse> sortedPerson = _personService.GetSortedPerson(filterPerson, sortBy, sortOrderOption);
             return View(sortedPerson);
+        }
+
+        [Route("/person/create")]
+        [HttpGet]
+        public IActionResult Create() {
+            ViewBag.Countries = _countryService.GetAllCountries();
+            return View();
+        }
+
+        [Route("/person/create")]
+        [HttpPost]
+        public IActionResult Create(PersonAddRequest? personAddRequest) {
+            if(!ModelState.IsValid) {
+                ViewBag.Countries = _countryService.GetAllCountries();
+                ViewBag.Errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+                return View();
+            }
+            PersonResponse personResponse = _personService.AddPerson(personAddRequest);
+            return RedirectToAction("Index","Person");
         }
     }
 }
