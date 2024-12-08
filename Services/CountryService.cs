@@ -1,13 +1,16 @@
 ﻿using Entities;
 using ServiceContracts;
 using ServiceContracts.DataTransferObject;
+using System.Text.Json;
 
 namespace Services {
     public class CountryService : ICountryService {
         private List<Country> _countries;
 
         public CountryService() {
-            _countries = new List<Country>();
+            string fileName = "countrydata.json";
+            string jsonString = File.ReadAllText(Path.Combine(Directory.GetCurrentDirectory(), fileName));
+            _countries = JsonSerializer.Deserialize<List<Country>>(jsonString);
         }
 
         public CountryResponse AddCountry(CountryAddRequest? countryAddRequest) {

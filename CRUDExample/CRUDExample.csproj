@@ -7,11 +7,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="mockdata.json" />
+    <Content Remove="countrydata.json" />
+    <Content Remove="persondata.json" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="mockdata.json">
+    <None Include="countrydata.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="persondata.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

@@ -1,11 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using ServiceContracts;
 using ServiceContracts.DataTransferObject;
 using ServiceContracts.Enums;
 
 namespace CRUDExample.Controllers {
     [Controller]
+    [Route("person")]
     public class Person : Controller {
 
         private readonly IPersonService _personService;
@@ -17,7 +18,7 @@ namespace CRUDExample.Controllers {
         }
 
         [Route("/")]
-        [Route("/person/index")]
+        [Route("[action]")]
         public IActionResult Index(string searchBy, string? searchString, string sortBy = nameof(PersonResponse.PersonName), SortOrderOption sortOrderOption = SortOrderOption.ASC) {
             ViewBag.CurrentSearchBy = searchBy;
             ViewBag.CurrentSearchString = searchString;
@@ -38,14 +39,15 @@ namespace CRUDExample.Controllers {
             return View(sortedPerson);
         }
 
-        [Route("/person/create")]
+        [Route("[action]")]
         [HttpGet]
         public IActionResult Create() {
-            ViewBag.Countries = _countryService.GetAllCountries();
+            List<CountryResponse> countryResponses = _countryService.GetAllCountries();
+            ViewBag.Countries = countryResponses.Select(temp => new SelectListItem() { Text = temp.CountryName, Value = temp.CountryID.ToString() });
             return View();
         }
 
-        [Route("/person/create")]
+        [Route("[action]")]
         [HttpPost]
         public IActionResult Create(PersonAddRequest? personAddRequest) {
             if(!ModelState.IsValid) {
@@ -54,7 +56,7 @@ namespace CRUDExample.Controllers {
                 return View();
             }
             PersonResponse personResponse = _personService.AddPerson(personAddRequest);
-            return RedirectToAction("Index","Person");
+            return RedirectToAction("Index", "Person");
         }
     }
 }

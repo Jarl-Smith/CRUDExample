@@ -11,10 +11,10 @@ namespace Services {
         private readonly List<Person> _person;
         private readonly ICountryService _countryService;
 
-        public PersonService() {
+        public PersonService(ICountryService countryService) {
             //_person = new List<Person>();
-            _countryService = new CountryService();
-            string fileName = "mockdata.json";
+            _countryService = countryService;
+            string fileName = "persondata.json";
             string jsonString = File.ReadAllText(Path.Combine(Directory.GetCurrentDirectory(), fileName));
             _person = JsonSerializer.Deserialize<List<Person>>(jsonString);
         }
@@ -37,7 +37,7 @@ namespace Services {
         }
 
         public List<PersonResponse> GetAllPerson() {
-            return _person.Select(person => person.ToPersonResponse()).ToList();
+            return _person.Select(p => convertPersonToPersonResponse(p)).ToList();
         }
 
         public List<PersonResponse> GetFilterPerson(string searchBy, string? searchString) {

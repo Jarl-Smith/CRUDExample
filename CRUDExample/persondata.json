@@ -5,7 +5,7 @@
     "Email": "hbroad0@marketwatch.com",
     "DateOfBirth": "1985-08-01",
     "Gender": "Male",
-    "Country": "Madagascar",
+    "CountryID": "7CF40DB8-7F7C-B531-F0A5-ABF2D7CD778B",
     "Address": "4 Transport Center",
     "ReceiveNewsLetters": false
   },
@@ -15,7 +15,7 @@
     "Email": "dlevensky1@barnesandnoble.com",
     "DateOfBirth": "1993-05-22",
     "Gender": "Female",
-    "Country": "Nigeria",
+    "CountryID": "384B362A-0F7B-DA3C-69BD-36E615484632",
     "Address": "577 7th Terrace",
     "ReceiveNewsLetters": false
   },
@@ -25,7 +25,7 @@
     "Email": "tribbens2@blogger.com",
     "DateOfBirth": "2000-02-06",
     "Gender": "Female",
-    "Country": "Portugal",
+    "CountryID": "7CF40DB8-7F7C-B531-F0A5-ABF2D7CD778B",
     "Address": "6 Parkside Hill",
     "ReceiveNewsLetters": false
   },
@@ -35,7 +35,7 @@
     "Email": "tcampana3@hud.gov",
     "DateOfBirth": "1996-03-22",
     "Gender": "Male",
-    "Country": "Jamaica",
+    "CountryID": "384B362A-0F7B-DA3C-69BD-36E615484632",
     "Address": "80 4th Street",
     "ReceiveNewsLetters": false
   },
@@ -45,7 +45,7 @@
     "Email": "ahyatt4@bbb.org",
     "DateOfBirth": "1991-03-05",
     "Gender": "Male",
-    "Country": "China",
+    "CountryID": "384B362A-0F7B-DA3C-69BD-36E615484632",
     "Address": "1 Daystar Hill",
     "ReceiveNewsLetters": false
   },
@@ -55,7 +55,7 @@
     "Email": "fstrother5@vimeo.com",
     "DateOfBirth": "1990-11-28",
     "Gender": "Male",
-    "Country": "Brazil",
+    "CountryID": "384B362A-0F7B-DA3C-69BD-36E615484632",
     "Address": "348 Anniversary Avenue",
     "ReceiveNewsLetters": false
   },
@@ -65,7 +65,7 @@
     "Email": "dearsman6@cbsnews.com",
     "DateOfBirth": "1986-09-29",
     "Gender": "Male",
-    "Country": "Indonesia",
+    "CountryID": "384B362A-0F7B-DA3C-69BD-36E615484632",
     "Address": "11866 Graceland Way",
     "ReceiveNewsLetters": true
   },
@@ -75,7 +75,7 @@
     "Email": "amedlar7@umn.edu",
     "DateOfBirth": "1983-05-14",
     "Gender": "Male",
-    "Country": "Brazil",
+    "CountryID": "384B362A-0F7B-DA3C-69BD-36E615484632",
     "Address": "68 Oakridge Crossing",
     "ReceiveNewsLetters": true
   },
@@ -85,7 +85,7 @@
     "Email": "bmersh8@aboutads.info",
     "DateOfBirth": "1988-09-27",
     "Gender": "Female",
-    "Country": "Netherlands",
+    "CountryID": "384B362A-0F7B-DA3C-69BD-36E615484632",
     "Address": "40 Old Gate Junction",
     "ReceiveNewsLetters": false
   },
@@ -95,7 +95,7 @@
     "Email": "jlearoid9@marketwatch.com",
     "DateOfBirth": "1983-04-30",
     "Gender": "Female",
-    "Country": "China",
+    "CountryID": "384B362A-0F7B-DA3C-69BD-36E615484632",
     "Address": "161 Grasskamp Way",
     "ReceiveNewsLetters": false
   }

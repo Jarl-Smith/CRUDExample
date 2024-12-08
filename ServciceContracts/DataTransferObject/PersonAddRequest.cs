@@ -4,11 +4,13 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ServiceContracts.DataTransferObject {
     public class PersonAddRequest {
-        [Required(ErrorMessage ="PersonName should not be blank")]
+        [Required(ErrorMessage = "PersonName should not be blank")]
         public string? PersonName { get; set; }
         [Required(ErrorMessage = "Email can't be blank")]
         [EmailAddress]
+        [DataType(DataType.EmailAddress)]
         public string? Email { get; set; }
+        [DataType(DataType.Date)]
         public DateTime? DateOfBirth { get; set; }
         public GenderOptions? Gender { get; set; }
         public Guid? CountryID { get; set; }
