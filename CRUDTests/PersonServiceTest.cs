@@ -3,8 +3,6 @@ using ServiceContracts.Enums;
 using Services;
 using ServiceContracts.DataTransferObject;
 using Xunit.Abstractions;
-using ServiceContracts.Enums;
-using ServiceContracts.DataTransferObject;
 
 namespace CRUDTests {
     public class PersonServiceTest {

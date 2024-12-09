@@ -11,8 +11,14 @@ namespace Services {
         private readonly List<Person> _person;
         private readonly ICountryService _countryService;
 
+        public PersonService() {
+            _countryService = new CountryService();
+            string fileName = "persondata.json";
+            string jsonString = File.ReadAllText(Path.Combine(Directory.GetCurrentDirectory(), fileName));
+            _person = JsonSerializer.Deserialize<List<Person>>(jsonString);
+        }
+
         public PersonService(ICountryService countryService) {
-            //_person = new List<Person>();
             _countryService = countryService;
             string fileName = "persondata.json";
             string jsonString = File.ReadAllText(Path.Combine(Directory.GetCurrentDirectory(), fileName));

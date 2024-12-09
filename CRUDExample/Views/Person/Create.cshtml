@@ -9,28 +9,31 @@
         <div class="form-field flex">
             @*PersonName*@
             <div class="w-25">
-                <label class="form-label pt" for="PersonName">Person Name</label>
+                <label asp-for="PersonName" class="form-label pt">Person Name</label>
             </div>
             <div class="flex-1">
                 <input asp-for="PersonName" class="form-input" />
+                <span asp-validation-for="PersonName" class="text-red"></span>
             </div>
         </div>
         <div class="form-field flex">
             @*Email*@
             <div class="w-25">
-                <label class="form-label pt" for="Email">Email</label>
+                <label asp-for="Email" class="form-label pt">Email</label>
             </div>
             <div class="flex-1">
                 <input asp-for="Email" class="form-input" />
+                <span asp-validation-for="Email" class="text-red"></span>
             </div>
         </div>
         <div class="form-field flex">
             @*DateOfBirth*@
             <div class="w-25">
-                <label class="form-label pt" for="DateOfBirth">Date Of Birth</label>
+                <label asp-for="DateOfBirth" class="form-label pt">Date Of Birth</label>
             </div>
             <div class="flex-1">
                 <input asp-for="DateOfBirth" class="form-input" />
+                <span asp-validation-for="DateOfBirth" class="text-red"></span>
             </div>
         </div>
         <div class="form-field flex">
@@ -46,36 +49,39 @@
                 {
                     <input asp-for="Gender" class="ml" type="radio" value="@gender" />
                     <label class="form-label" for="Gender">@gender</label>
-
                 }
+                <span asp-validation-for="Gender" class="text-red"></span>
             </div>
         </div>
         <div class="form-field flex">
             @*Country*@
             <div class="w-25">
-                <label class="form-label pt" for="CountryID">Country</label>
+                <label asp-for="CountryID" class="form-label pt">Country</label>
             </div>
             <div class="flex-1">
                 <select class="form-input" asp-for="CountryID" asp-items="@ViewBag.Countries">
                 </select>
+                <span asp-validation-for="CountryID" class="text-red"></span>
             </div>
         </div>
         <div class="form-field flex">
             @*Address*@
             <div class="w-25">
-                <label class="form-label pt" for="Address">Address</label>
+                <label asp-for="Address" class="form-label pt">Address</label>
             </div>
             <div class="flex-1">
                 <textarea asp-for="Address" class="form-input"></textarea>
+                <span asp-validation-for="Address" class="text-red"></span>
             </div>
         </div>
         <div class="form-field flex">
             @*ReceiveNewsLetters*@
             <div class="w-25">
-                <label class="form-label pt" for="ReceiveNewsLetters">Receive News Letters</label>
+                <label asp-for="ReceiveNewsLetters" class="form-label pt">Receive News Letters</label>
             </div>
             <div class="flex-1">
                 <input asp-for="ReceiveNewsLetters" class="form-input" />
+                <span asp-validation-for="ReceiveNewsLetters" class="text-red"></span>
             </div>
         </div>
         @*Submit*@
@@ -83,6 +89,7 @@
             <div class="w-25"></div>
             <div class="flex-1">
                 <button class="button button-green-back">Create</button>
+                <div asp-validation-summary="All" class="text-red"></div>
                 @if (ViewBag.Errors != null)
                 {
                     <div class="text-red ml">
@@ -98,3 +105,6 @@
         </div>
     </form>
 </div>
+<script src="~/jquery.min.js"></script>
+<script src="~/jquery.validate.min.js"></script>
+<script src="~/jquery.validate.unobtrusive.min.js"></script>
