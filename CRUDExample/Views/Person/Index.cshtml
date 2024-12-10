@@ -34,6 +34,7 @@
     <table class="table w-100 mt">
         <thead>
         <th>
+                @*按照DRY原则，此处可以用循环进一步简化，为方便阅读，所以进行了适当的重复。此处用PartialView替换原来的plain code，*@
                 @await Html.PartialAsync("_GridColumnHeader", new ViewDataDictionary(ViewData){
             {"ColumnName",nameof(PersonResponse.PersonName)},
             {"DisplayName","Person Name"}

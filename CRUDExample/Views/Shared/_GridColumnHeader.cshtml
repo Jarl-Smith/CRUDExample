@@ -1,4 +1,7 @@
-﻿@using ServiceContracts.Enums
+﻿@*如何实现点击表头实现排序，每个表头都是<a>标签，<a>标签的href值硬编码为[route]?[QueryString1=value]&[QueryString2=value]...
+QueryString包含当前查询的字段，查询的关键字，排序的字段，升序还是降序，通过将以上数据以QueryString的形式传递到服务器
+服务器收到客户发送的以上信息，进行筛选并排序，将结果返回给客户端，达到筛选+排序的功能*@
+@using ServiceContracts.Enums
 @if (ViewBag.CurrentSortBy == ViewBag.ColumnName)
 {
     @if (ViewBag.CurrentSortOrderOption == SortOrderOption.ASC.ToString())

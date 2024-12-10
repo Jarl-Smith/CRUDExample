@@ -6,7 +6,7 @@ using ServiceContracts.Enums;
 
 namespace CRUDExample.Controllers {
     [Controller]
-    [Route("person")]
+    [Route("[controller]")]
     public class Person : Controller {
 
         private readonly IPersonService _personService;
@@ -19,6 +19,7 @@ namespace CRUDExample.Controllers {
 
         [Route("/")]
         [Route("[action]")]
+        //通过Asp.Net Core的QueryString Binding，接收客户发送的请求，按照请求进行筛选+排序，并返回结果
         public IActionResult Index(string searchBy, string? searchString, string sortBy = nameof(PersonResponse.PersonName), SortOrderOption sortOrderOption = SortOrderOption.ASC) {
             ViewBag.CurrentSearchBy = searchBy;
             ViewBag.CurrentSearchString = searchString;
@@ -49,6 +50,7 @@ namespace CRUDExample.Controllers {
 
         [Route("[action]")]
         [HttpPost]
+        //通过Asp.Net Core的model binding，接收用户的数据，对model进行验证，验证不通过将验证结果返回，验证通过执行添加操作并返回主界面
         public IActionResult Create(PersonAddRequest? personAddRequest) {
             if(!ModelState.IsValid) {
                 ViewBag.Countries = _countryService.GetAllCountries();
