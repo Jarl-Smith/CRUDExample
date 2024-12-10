@@ -82,19 +82,23 @@
             {"DisplayName","Age"}
             })
         </th>
+        <th>
+            Options
+        </th>
         </thead>
         <tbody>
             @foreach (PersonResponse personResponse in Model)
             {
                 <tr>
-                    <td>@personResponse.PersonName</td>
-                    <td>@personResponse.Email</td>
-                    <td>@personResponse.DateOfBirth?.ToString("yyyy-MM-dd")</td>
-                    <td>@personResponse.Gender</td>
-                    <td>@personResponse.Country</td>
-                    <td>@personResponse.Address</td>
-                    <td>@personResponse.ReceiveNewsLetters</td>
-                    <td>@personResponse.Age</td>
+                    <td style="width:15%">@personResponse.PersonName</td>
+                    <td style="width:20%">@personResponse.Email</td>
+                    <td style="width:13%">@personResponse.DateOfBirth?.ToString("yyyy-MM-dd")</td>
+                    <td style="width:9%">@personResponse.Gender</td>
+                    <td style="width:9%">@personResponse.Country</td>
+                    <td style="width:10%">@personResponse.Address</td>
+                    <td style="width:15%">@personResponse.ReceiveNewsLetters</td>
+                    <td style="width:20%">@personResponse.Age</td>
+                    <td style="width:20%"><a asp-controller="Person" asp-action="Edit" asp-route-personID="@personResponse.PersonID">Edit</a></td>
                 </tr>
             }
         </tbody>

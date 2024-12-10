@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using ServiceContracts;
 using ServiceContracts.DataTransferObject;
@@ -59,6 +60,33 @@ namespace CRUDExample.Controllers {
             }
             PersonResponse personResponse = _personService.AddPerson(personAddRequest);
             return RedirectToAction("Index", "Person");
+        }
+
+        [HttpGet]
+        [Route("[action]/{personID}")]//Eg:person/edit/afea1654
+        public IActionResult Edit(Guid personID) {
+            PersonResponse? personResponse = _personService.GetPersonByPersonID(personID);
+            if(personResponse == null) {
+                return RedirectToAction("Index");
+            } else {
+                ViewBag.Countries = _countryService.GetAllCountries().Select(c => new SelectListItem() { Text = c.CountryName, Value = c.CountryID.ToString() }).ToList();
+                return View(personResponse.ToPersonUpdateRequest());
+            }
+        }
+
+        [HttpPost]
+        [Route("[action]/{personID}")]
+        public IActionResult Edit(PersonUpdateRequest personUpdateRequest) {
+            PersonResponse? personResponse = _personService.GetPersonByPersonID(personUpdateRequest.PersonID);
+            if(personResponse == null) { return RedirectToAction("Index"); }
+            if(!ModelState.IsValid) {
+                ViewBag.Countries = _countryService.GetAllCountries();
+                ViewBag.Errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+                return View(personUpdateRequest);
+            } else {
+                _personService.UpdatePerson(personUpdateRequest);
+                return RedirectToAction("Index");
+            }
         }
     }
 }
