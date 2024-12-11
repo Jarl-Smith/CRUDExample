@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using ServiceContracts;
 using ServiceContracts.DataTransferObject;
@@ -87,6 +86,32 @@ namespace CRUDExample.Controllers {
                 _personService.UpdatePerson(personUpdateRequest);
                 return RedirectToAction("Index");
             }
+        }
+
+        [HttpGet]
+        [Route("[action]/{personID}")]
+        public IActionResult Delete(Guid? personID) {
+            if(personID == null) {
+                return RedirectToAction("Index");
+            } else {
+                PersonResponse? personResponse = _personService.GetPersonByPersonID(personID);
+                if(personResponse == null) {
+                    return RedirectToAction("Index");
+                } else {
+                    return View(personResponse);
+                }
+            }
+        }
+
+        [HttpPost]
+        [Route("[action]/{personID}")]
+        public IActionResult Delete(PersonResponse personResponse) {
+            PersonResponse? personResponse1 = _personService.GetPersonByPersonID(personResponse.PersonID);
+            if(personResponse1 == null) {
+                return RedirectToAction("Index");
+            }
+            _personService.DeletePersonByID(personResponse1.PersonID);
+            return RedirectToAction("Index");
         }
     }
 }
