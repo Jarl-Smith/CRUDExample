@@ -12,7 +12,6 @@ namespace Services {
         private readonly ICountryService _countryService;
 
         public PersonService() {
-            _countryService = new CountryService();
             string fileName = "persondata.json";
             string jsonString = File.ReadAllText(Path.Combine(Directory.GetCurrentDirectory(), fileName));
             _person = JsonSerializer.Deserialize<List<Person>>(jsonString);

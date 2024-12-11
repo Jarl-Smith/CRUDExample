@@ -5,14 +5,14 @@ using ServiceContracts.DataTransferObject;
 using ServiceContracts.Enums;
 
 namespace CRUDExample.Controllers {
-    [Controller]
+
     [Route("[controller]")]
-    public class Person : Controller {
+    public class PersonController : Controller {
 
         private readonly IPersonService _personService;
         private readonly ICountryService _countryService;
 
-        public Person(IPersonService personService, ICountryService countryService) {
+        public PersonController(IPersonService personService, ICountryService countryService) {
             _personService = personService;
             _countryService = countryService;
         }
