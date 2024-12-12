@@ -3,6 +3,8 @@ using ServiceContracts.Enums;
 using Services;
 using ServiceContracts.DataTransferObject;
 using Xunit.Abstractions;
+using Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace CRUDTests {
     public class PersonServiceTest {
@@ -12,8 +14,9 @@ namespace CRUDTests {
         private readonly ITestOutputHelper _testOutputHelper;
 
         public PersonServiceTest(ITestOutputHelper testOutputHelper) {
-            _personService = new PersonService();
-            _countryService = new CountryService();
+            PersonsDbContext personsDbContext = new PersonsDbContext(new DbContextOptionsBuilder<PersonsDbContext>().Options);
+            _countryService = new CountryService(personsDbContext);
+            _personService = new PersonService(personsDbContext, _countryService);
             _testOutputHelper = testOutputHelper;
         }
         #region AddPerson

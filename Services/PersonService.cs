@@ -34,7 +34,9 @@ namespace Services {
         }
 
         public List<PersonResponse> GetAllPerson() {
-            return _db.Persons.Select(p => convertPersonToPersonResponse(p)).ToList();
+            //这里需要注意，必须把数据从数据库转换为内存中的对象才能在Linq表达式中使用自定义的方法，否则会报InvalidOperationException
+            return _db.Persons.ToList()
+                .Select(p => convertPersonToPersonResponse(p)).ToList();
         }
 
         public List<PersonResponse> GetFilterPerson(string searchBy, string? searchString) {

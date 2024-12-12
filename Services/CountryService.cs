@@ -24,7 +24,8 @@ namespace Services {
         }
 
         public List<CountryResponse> GetAllCountries() {
-            return _db.Countries.Select(country => country.ToCountryResponse()).ToList();
+            //这里需要注意，必须把数据从数据库转换为内存中的对象才能在Linq表达式中使用自定义的方法，否则会报InvalidOperationException
+            return _db.Countries.ToList().Select(country => country.ToCountryResponse()).ToList();
         }
 
         public CountryResponse? GetCountryByCountryID(Guid? guid) {

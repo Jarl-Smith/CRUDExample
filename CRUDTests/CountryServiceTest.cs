@@ -3,6 +3,7 @@ using ServiceContracts;
 using Entities;
 using Services;
 using ServiceContracts.DataTransferObject;
+using Microsoft.EntityFrameworkCore;
 
 
 namespace CRUDTests {
@@ -10,7 +11,7 @@ namespace CRUDTests {
         private readonly ICountryService _countriesService;
 
         public CountryServiceTest() {
-            _countriesService = new CountryService();
+            _countriesService = new CountryService(new PersonsDbContext(new DbContextOptionsBuilder<PersonsDbContext>().Options));
         }
 
         #region AddCountry

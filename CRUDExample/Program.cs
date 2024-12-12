@@ -12,8 +12,8 @@ namespace CRUDExample {
                 option => {
                     option.UseSqlite(builder.Configuration.GetConnectionString("MySqlite3"));
                 });
-            builder.Services.AddSingleton<ICountryService, CountryService>();
-            builder.Services.AddSingleton<IPersonService, PersonService>();
+            builder.Services.AddScoped<ICountryService, CountryService>();
+            builder.Services.AddScoped<IPersonService, PersonService>();
             var app = builder.Build();
             app.UseStaticFiles();
             app.UseRouting();
