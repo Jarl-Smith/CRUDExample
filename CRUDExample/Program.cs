@@ -2,6 +2,7 @@ using Services;
 using ServiceContracts;
 using Entities;
 using Microsoft.EntityFrameworkCore;
+
 namespace CRUDExample {
     public class Program {
         public static void Main(string[] args) {

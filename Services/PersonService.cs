@@ -3,25 +3,16 @@ using ServiceContracts;
 using ServiceContracts.DataTransferObject;
 using ServiceContracts.Enums;
 using Services.Helpers;
-using System.Text.Json;
 
 namespace Services {
     public class PersonService : IPersonService {
 
-        private readonly List<Person> _person;
+        private readonly PersonsDbContext _db;
         private readonly ICountryService _countryService;
 
-        public PersonService() {
-            string fileName = "persondata.json";
-            string jsonString = File.ReadAllText(Path.Combine(Directory.GetCurrentDirectory(), fileName));
-            _person = JsonSerializer.Deserialize<List<Person>>(jsonString);
-        }
-
-        public PersonService(ICountryService countryService) {
+        public PersonService(PersonsDbContext personsDbContext, ICountryService countryService) {
+            _db = personsDbContext;
             _countryService = countryService;
-            string fileName = "persondata.json";
-            string jsonString = File.ReadAllText(Path.Combine(Directory.GetCurrentDirectory(), fileName));
-            _person = JsonSerializer.Deserialize<List<Person>>(jsonString);
         }
 
         private PersonResponse convertPersonToPersonResponse(Person person) {
@@ -37,12 +28,13 @@ namespace Services {
 
             Person person = personAddRequest.ToPerson();
             person.PersonID = Guid.NewGuid();
-            _person.Add(person);
+            _db.Persons.Add(person);
+            _db.SaveChanges();
             return convertPersonToPersonResponse(person);
         }
 
         public List<PersonResponse> GetAllPerson() {
-            return _person.Select(p => convertPersonToPersonResponse(p)).ToList();
+            return _db.Persons.Select(p => convertPersonToPersonResponse(p)).ToList();
         }
 
         public List<PersonResponse> GetFilterPerson(string searchBy, string? searchString) {
@@ -88,7 +80,7 @@ namespace Services {
         }
 
         public PersonResponse? GetPersonByPersonID(Guid? guid) {
-            return guid != null ? _person.Where(person => person.PersonID == guid).FirstOrDefault()?.ToPersonResponse() : null;
+            return guid != null ? _db.Persons.Where(person => person.PersonID == guid).FirstOrDefault()?.ToPersonResponse() : null;
         }
 
         public List<PersonResponse> GetSortedPerson(List<PersonResponse> allPerson, string sortBy, SortOrderOption sortOrderOption) {
@@ -119,7 +111,7 @@ namespace Services {
             if(personUpdateRequest == null) { throw new ArgumentNullException(nameof(personUpdateRequest)); }
             ValidationHelper.ModelValidation(personUpdateRequest);
 
-            Person? matchingPerson = _person.FirstOrDefault(temp => temp.PersonID == personUpdateRequest.PersonID);
+            Person? matchingPerson = _db.Persons.FirstOrDefault(temp => temp.PersonID == personUpdateRequest.PersonID);
             if(matchingPerson == null) { throw new ArgumentException("Given id doesn't exist"); }
             //Update all details
             matchingPerson.PersonName = personUpdateRequest.PersonName;
@@ -129,14 +121,17 @@ namespace Services {
             matchingPerson.CountryID = personUpdateRequest.CountryID;
             matchingPerson.Address = personUpdateRequest.Address;
             matchingPerson.ReceiveNewsLetters = personUpdateRequest.ReceiveNewsLetters;
+            _db.SaveChanges();
             return matchingPerson.ToPersonResponse();
         }
 
         public bool DeletePersonByID(Guid? guid) {
             if(guid == null) { throw new ArgumentNullException(nameof(guid)); }
-            Person? matchingPerson = _person.FirstOrDefault(temp => temp.PersonID == guid);
+            Person? matchingPerson = _db.Persons.FirstOrDefault(temp => temp.PersonID == guid);
             if(matchingPerson == null) { return false; }
-            return _person.Remove(matchingPerson);
+            _db.Persons.Remove(matchingPerson);
+            _db.SaveChanges();
+            return true;
         }
     }
 }
