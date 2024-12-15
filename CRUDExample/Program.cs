@@ -10,7 +10,7 @@ namespace CRUDExample {
             builder.Services.AddControllersWithViews();
             builder.Services.AddDbContext<PersonsDbContext>(
                 option => {
-                    option.UseSqlite(builder.Configuration.GetConnectionString("MySqlite3"));
+                    option.UseSqlServer(builder.Configuration.GetConnectionString("MySqlServer"));
                 });
             builder.Services.AddScoped<ICountryService, CountryService>();
             builder.Services.AddScoped<IPersonService, PersonService>();

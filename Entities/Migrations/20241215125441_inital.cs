@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Entities.Migrations
 {
     /// <inheritdoc />
-    public partial class Inital : Migration
+    public partial class inital : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -17,8 +17,8 @@ namespace Entities.Migrations
                 name: "Countries",
                 columns: table => new
                 {
-                    CountryID = table.Column<Guid>(type: "TEXT", nullable: false),
-                    CountryName = table.Column<string>(type: "TEXT", nullable: false)
+                    CountryID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CountryName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -29,14 +29,14 @@ namespace Entities.Migrations
                 name: "Persons",
                 columns: table => new
                 {
-                    PersonID = table.Column<Guid>(type: "TEXT", nullable: false),
-                    PersonName = table.Column<string>(type: "TEXT", maxLength: 40, nullable: true),
-                    Email = table.Column<string>(type: "TEXT", maxLength: 40, nullable: true),
-                    DateOfBirth = table.Column<DateTime>(type: "TEXT", nullable: true),
-                    Gender = table.Column<string>(type: "TEXT", maxLength: 6, nullable: true),
-                    CountryID = table.Column<Guid>(type: "TEXT", nullable: true),
-                    Address = table.Column<string>(type: "TEXT", maxLength: 200, nullable: true),
-                    ReceiveNewsLetters = table.Column<bool>(type: "INTEGER", nullable: false)
+                    PersonID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    PersonName = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: true),
+                    Email = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: true),
+                    DateOfBirth = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Gender = table.Column<string>(type: "nvarchar(6)", maxLength: 6, nullable: true),
+                    CountryID = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    Address = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
+                    ReceiveNewsLetters = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
