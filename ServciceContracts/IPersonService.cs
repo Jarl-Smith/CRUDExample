@@ -3,12 +3,12 @@ using ServiceContracts.Enums;
 
 namespace ServiceContracts {
     public interface IPersonService {
-        PersonResponse AddPerson(PersonAddRequest? personAddRequest);
-        List<PersonResponse> GetAllPerson();
-        PersonResponse? GetPersonByPersonID(Guid? guid);
-        List<PersonResponse> GetFilterPerson(string searchBy, string? searchString);
-        List<PersonResponse> GetSortedPerson(List<PersonResponse> allPerson, string sortBy, SortOrderOption sortOrderOption);
-        PersonResponse UpdatePerson(PersonUpdateRequest? personUpdateRequest);
-        bool DeletePersonByID(Guid? guid);
+        Task<PersonResponse> AddPerson(PersonAddRequest? personAddRequest);
+        Task<List<PersonResponse>> GetAllPerson();
+        Task<PersonResponse?> GetPersonByPersonID(Guid? guid);
+        Task<List<PersonResponse>> GetFilterPerson(string searchBy, string? searchString);
+        Task<List<PersonResponse>> GetSortedPerson(List<PersonResponse> allPerson, string sortBy, SortOrderOption sortOrderOption);
+        Task<PersonResponse> UpdatePerson(PersonUpdateRequest? personUpdateRequest);
+        Task<bool> DeletePersonByID(Guid? guid);
     }
 }

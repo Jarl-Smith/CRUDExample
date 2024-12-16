@@ -2,8 +2,8 @@
 
 namespace ServiceContracts {
     public interface ICountryService {
-        CountryResponse AddCountry(CountryAddRequest? countryAddRequest);
-        List<CountryResponse> GetAllCountries();
-        CountryResponse? GetCountryByCountryID(Guid? guid);
+        Task<CountryResponse> AddCountry(CountryAddRequest? countryAddRequest);
+        Task<List<CountryResponse>> GetAllCountries();
+        Task<CountryResponse?> GetCountryByCountryID(Guid? guid);
     }
 }
