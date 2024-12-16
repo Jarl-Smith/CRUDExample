@@ -1,24 +1,18 @@
 ﻿using Entities;
+using Microsoft.EntityFrameworkCore;
 using ServiceContracts;
 using ServiceContracts.DataTransferObject;
 using ServiceContracts.Enums;
 using Services.Helpers;
+using System;
 
 namespace Services {
     public class PersonService : IPersonService {
 
         private readonly PersonsDbContext _db;
-        private readonly ICountryService _countryService;
 
         public PersonService(PersonsDbContext personsDbContext, ICountryService countryService) {
             _db = personsDbContext;
-            _countryService = countryService;
-        }
-
-        private PersonResponse convertPersonToPersonResponse(Person person) {
-            PersonResponse personResponse = person.ToPersonResponse();
-            personResponse.Country = _countryService.GetCountryByCountryID(personResponse.CountryID)?.CountryName;
-            return personResponse;
         }
 
         public PersonResponse AddPerson(PersonAddRequest? personAddRequest) {
@@ -30,13 +24,13 @@ namespace Services {
             person.PersonID = Guid.NewGuid();
             _db.Persons.Add(person);
             _db.SaveChanges();
-            return convertPersonToPersonResponse(person);
+            return person.ToPersonResponse();
         }
 
         public List<PersonResponse> GetAllPerson() {
             //这里需要注意，必须把数据从数据库转换为内存中的对象才能在Linq表达式中使用自定义的方法，否则会报InvalidOperationException
-            return _db.Persons.ToList()
-                .Select(p => convertPersonToPersonResponse(p)).ToList();
+            return _db.Persons.Include(nameof(Person.Country)).ToList()
+                .Select(p => p.ToPersonResponse()).ToList();
         }
 
         public List<PersonResponse> GetFilterPerson(string searchBy, string? searchString) {
@@ -82,7 +76,7 @@ namespace Services {
         }
 
         public PersonResponse? GetPersonByPersonID(Guid? guid) {
-            return guid != null ? _db.Persons.Where(person => person.PersonID == guid).FirstOrDefault()?.ToPersonResponse() : null;
+            return guid != null ? _db.Persons.Include(nameof(Person.Country)).FirstOrDefault(person => person.PersonID == guid)?.ToPersonResponse() : null;
         }
 
         public List<PersonResponse> GetSortedPerson(List<PersonResponse> allPerson, string sortBy, SortOrderOption sortOrderOption) {
@@ -113,7 +107,7 @@ namespace Services {
             if(personUpdateRequest == null) { throw new ArgumentNullException(nameof(personUpdateRequest)); }
             ValidationHelper.ModelValidation(personUpdateRequest);
 
-            Person? matchingPerson = _db.Persons.FirstOrDefault(temp => temp.PersonID == personUpdateRequest.PersonID);
+            Person? matchingPerson = _db.Persons.Include(nameof(Person.Country)).FirstOrDefault(temp => temp.PersonID == personUpdateRequest.PersonID);
             if(matchingPerson == null) { throw new ArgumentException("Given id doesn't exist"); }
             //Update all details
             matchingPerson.PersonName = personUpdateRequest.PersonName;
