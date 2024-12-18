@@ -114,5 +114,12 @@ namespace CRUDExample.Controllers {
             await _personService.DeletePersonByID(personResponse1.PersonID);
             return RedirectToAction("Index");
         }
+
+        [HttpGet]
+        [Route("[action]")]
+        public async Task<IActionResult> GetAllPersonAsExcel() {
+            MemoryStream memoryStream = await _personService.GetAllPersonAsExcel();
+            return File(memoryStream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "AllPerson.xlsx");
+        }
     }
 }

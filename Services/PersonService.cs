@@ -1,5 +1,6 @@
 ﻿using Entities;
 using Microsoft.EntityFrameworkCore;
+using OfficeOpenXml;
 using ServiceContracts;
 using ServiceContracts.DataTransferObject;
 using ServiceContracts.Enums;
@@ -131,6 +132,40 @@ namespace Services {
             _db.Persons.Remove(matchingPerson);
             await _db.SaveChangesAsync();
             return true;
+        }
+
+        public async Task<MemoryStream> GetAllPersonAsExcel() {
+            MemoryStream memoryStream = new MemoryStream();
+            List<PersonResponse> allPerson = _db.Persons.Include(nameof(PersonResponse.Country)).Select(p => p.ToPersonResponse()).ToList();
+            using(var package = new ExcelPackage(memoryStream)) {
+                ExcelWorksheet workSheet = package.Workbook.Worksheets.Add("AllPerson");
+                workSheet.Cells[1, 1].Value = nameof(PersonResponse.PersonID);
+                workSheet.Cells[1, 2].Value = nameof(PersonResponse.PersonName);
+                workSheet.Cells[1, 3].Value = nameof(PersonResponse.Email);
+                workSheet.Cells[1, 4].Value = nameof(PersonResponse.DateOfBirth);
+                workSheet.Cells[1, 5].Value = nameof(PersonResponse.Gender);
+                workSheet.Cells[1, 6].Value = nameof(PersonResponse.Country);
+                workSheet.Cells[1, 7].Value = nameof(PersonResponse.Address);
+                workSheet.Cells[1, 8].Value = nameof(PersonResponse.ReceiveNewsLetters);
+                workSheet.Cells[1, 9].Value = nameof(PersonResponse.Age);
+                int recordStartRow = 2;
+                foreach(PersonResponse personResponse in allPerson) {
+                    workSheet.Cells[recordStartRow, 1].Value = personResponse.PersonID;
+                    workSheet.Cells[recordStartRow, 2].Value = personResponse.PersonName;
+                    workSheet.Cells[recordStartRow, 3].Value = personResponse.Email;
+                    workSheet.Cells[recordStartRow, 4].Value = personResponse.DateOfBirth?.ToString("yyyy-MM-dd");
+                    workSheet.Cells[recordStartRow, 5].Value = personResponse.Gender;
+                    workSheet.Cells[recordStartRow, 6].Value = personResponse.Country;
+                    workSheet.Cells[recordStartRow, 7].Value = personResponse.Address;
+                    workSheet.Cells[recordStartRow, 8].Value = personResponse.ReceiveNewsLetters;
+                    workSheet.Cells[recordStartRow, 9].Value = personResponse.Age;
+                    recordStartRow++;
+                }
+                workSheet.Cells[1, 1, recordStartRow, 9].AutoFitColumns();
+                await package.SaveAsync();
+            }
+            memoryStream.Position = 0;
+            return memoryStream;
         }
     }
 }

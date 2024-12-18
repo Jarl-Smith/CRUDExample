@@ -10,5 +10,6 @@ namespace ServiceContracts {
         Task<List<PersonResponse>> GetSortedPerson(List<PersonResponse> allPerson, string sortBy, SortOrderOption sortOrderOption);
         Task<PersonResponse> UpdatePerson(PersonUpdateRequest? personUpdateRequest);
         Task<bool> DeletePersonByID(Guid? guid);
+        Task<MemoryStream> GetAllPersonAsExcel();
     }
 }
