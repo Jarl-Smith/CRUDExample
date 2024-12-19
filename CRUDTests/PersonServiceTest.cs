@@ -14,7 +14,7 @@ namespace CRUDTests {
         private readonly ITestOutputHelper _testOutputHelper;
 
         public PersonServiceTest(ITestOutputHelper testOutputHelper) {
-            PersonsDbContext personsDbContext = new PersonsDbContext(new DbContextOptionsBuilder<PersonsDbContext>().Options);
+            ApplicationDbContext personsDbContext = new ApplicationDbContext(new DbContextOptionsBuilder<ApplicationDbContext>().Options);
             _countryService = new CountryService(personsDbContext);
             _personService = new PersonService(personsDbContext, _countryService);
             _testOutputHelper = testOutputHelper;

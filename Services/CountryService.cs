@@ -5,9 +5,9 @@ using ServiceContracts.DataTransferObject;
 
 namespace Services {
     public class CountryService : ICountryService {
-        private readonly PersonsDbContext _db;
+        private readonly ApplicationDbContext _db;
 
-        public CountryService(PersonsDbContext personsDbContext) {
+        public CountryService(ApplicationDbContext personsDbContext) {
             _db = personsDbContext;
         }
 

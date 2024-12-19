@@ -10,7 +10,7 @@ namespace CRUDTests {
         private readonly ICountryService _countriesService;
 
         public CountryServiceTest() {
-            _countriesService = new CountryService(new PersonsDbContext(new DbContextOptionsBuilder<PersonsDbContext>().Options));
+            _countriesService = new CountryService(new ApplicationDbContext(new DbContextOptionsBuilder<ApplicationDbContext>().Options));
         }
 
         #region AddCountry
