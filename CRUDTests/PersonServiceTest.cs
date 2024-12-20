@@ -5,6 +5,7 @@ using ServiceContracts.DataTransferObject;
 using Xunit.Abstractions;
 using Entities;
 using Microsoft.EntityFrameworkCore;
+using Repository;
 
 namespace CRUDTests {
     public class PersonServiceTest {
@@ -14,9 +15,9 @@ namespace CRUDTests {
         private readonly ITestOutputHelper _testOutputHelper;
 
         public PersonServiceTest(ITestOutputHelper testOutputHelper) {
-            ApplicationDbContext personsDbContext = new ApplicationDbContext(new DbContextOptionsBuilder<ApplicationDbContext>().Options);
-            _countryService = new CountryService(personsDbContext);
-            _personService = new PersonService(personsDbContext, _countryService);
+            ApplicationDbContext appDbContext = new ApplicationDbContext(new DbContextOptionsBuilder<ApplicationDbContext>().Options);
+            _countryService = new CountryService(new CountryRepository(appDbContext));
+            _personService = new PersonService(new PersonRepository(appDbContext));
             _testOutputHelper = testOutputHelper;
         }
         #region AddPerson

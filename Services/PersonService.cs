@@ -5,15 +5,15 @@ using ServiceContracts;
 using ServiceContracts.DataTransferObject;
 using ServiceContracts.Enums;
 using Services.Helpers;
-using System;
+using RepositoryContracts;
 
 namespace Services {
     public class PersonService : IPersonService {
 
-        private readonly ApplicationDbContext _db;
+        private readonly IPersonRepository _personRepository;
 
-        public PersonService(ApplicationDbContext personsDbContext, ICountryService countryService) {
-            _db = personsDbContext;
+        public PersonService(IPersonRepository personRepository) {
+            _personRepository = personRepository;
         }
 
         public async Task<PersonResponse> AddPerson(PersonAddRequest? personAddRequest) {
@@ -23,14 +23,34 @@ namespace Services {
 
             Person person = personAddRequest.ToPerson();
             person.PersonID = Guid.NewGuid();
-            _db.Persons.Add(person);
-            await _db.SaveChangesAsync();
+            await _personRepository.AddPerson(person);
             return person.ToPersonResponse();
         }
 
+        public async Task<bool> DeletePersonByID(Guid? guid) {
+            if(guid == null) { throw new ArgumentNullException(nameof(guid)); }
+            if(await _personRepository.GetPersonByID(guid.Value) == null) { return false; }
+            await _personRepository.DeletePersonByID(guid.Value);
+            return true;
+        }
+
+        public async Task<PersonResponse> UpdatePerson(PersonUpdateRequest? personUpdateRequest) {
+            if(personUpdateRequest == null) { throw new ArgumentNullException(nameof(personUpdateRequest)); }
+            ValidationHelper.ModelValidation(personUpdateRequest);
+
+            if(await _personRepository.GetPersonByID(personUpdateRequest.PersonID) == null) { throw new ArgumentException("Given id doesn't exist"); }
+            Person updatedPerson = await _personRepository.UpdatePerson(personUpdateRequest.ToPerson());
+            return updatedPerson.ToPersonResponse();
+        }
+
+        public async Task<PersonResponse?> GetPersonByPersonID(Guid? guid) {
+            if(guid == null) return null;
+            Person? p = await _personRepository.GetPersonByID(guid.Value);
+            return p?.ToPersonResponse();
+        }
+
         public async Task<List<PersonResponse>> GetAllPerson() {
-            //这里需要注意，必须把数据从数据库转换为内存中的对象才能在Linq表达式中使用自定义的方法，否则会报InvalidOperationException
-            List<Person> persons = await _db.Persons.Include(nameof(Person.Country)).ToListAsync();
+            List<Person> persons = await _personRepository.GetAllPerson();
             return persons.Select(p => p.ToPersonResponse()).ToList();
         }
 
@@ -76,13 +96,6 @@ namespace Services {
             return matchingPerson;
         }
 
-        public async Task<PersonResponse?> GetPersonByPersonID(Guid? guid) {
-            if(guid == null) return null;
-
-            Person? p = await _db.Persons.Include(nameof(Person.Country)).FirstOrDefaultAsync(person => person.PersonID == guid);
-            return p?.ToPersonResponse();
-        }
-
         public async Task<List<PersonResponse>> GetSortedPerson(List<PersonResponse> allPerson, string sortBy, SortOrderOption sortOrderOption) {
             List<PersonResponse> sortPerson = (sortBy, sortOrderOption)
             switch {
@@ -107,37 +120,10 @@ namespace Services {
             return sortPerson;
         }
 
-        public async Task<PersonResponse> UpdatePerson(PersonUpdateRequest? personUpdateRequest) {
-            if(personUpdateRequest == null) { throw new ArgumentNullException(nameof(personUpdateRequest)); }
-            ValidationHelper.ModelValidation(personUpdateRequest);
-
-            Person? matchingPerson = await _db.Persons.Include(nameof(Person.Country)).FirstOrDefaultAsync(temp => temp.PersonID == personUpdateRequest.PersonID);
-            if(matchingPerson == null) { throw new ArgumentException("Given id doesn't exist"); }
-            //Update all details
-            matchingPerson.PersonName = personUpdateRequest.PersonName;
-            matchingPerson.Email = personUpdateRequest.Email;
-            matchingPerson.DateOfBirth = personUpdateRequest.DateOfBirth;
-            matchingPerson.Gender = personUpdateRequest.Gender.ToString();
-            matchingPerson.CountryID = personUpdateRequest.CountryID;
-            matchingPerson.Address = personUpdateRequest.Address;
-            matchingPerson.ReceiveNewsLetters = personUpdateRequest.ReceiveNewsLetters;
-            await _db.SaveChangesAsync();
-            return matchingPerson.ToPersonResponse();
-        }
-
-        public async Task<bool> DeletePersonByID(Guid? guid) {
-            if(guid == null) { throw new ArgumentNullException(nameof(guid)); }
-            Person? matchingPerson = await _db.Persons.FirstOrDefaultAsync(temp => temp.PersonID == guid);
-            if(matchingPerson == null) { return false; }
-            _db.Persons.Remove(matchingPerson);
-            await _db.SaveChangesAsync();
-            return true;
-        }
-
         public async Task<MemoryStream> GetAllPersonAsExcel() {
             MemoryStream memoryStream = new MemoryStream();
-            List<PersonResponse> allPerson = _db.Persons.Include(nameof(PersonResponse.Country)).Select(p => p.ToPersonResponse()).ToList();
-            using(var package = new ExcelPackage(memoryStream)) {
+            List<PersonResponse> allPerson = await GetAllPerson();
+            using(ExcelPackage package = new ExcelPackage(memoryStream)) {
                 ExcelWorksheet workSheet = package.Workbook.Worksheets.Add("AllPerson");
                 workSheet.Cells[1, 1].Value = nameof(PersonResponse.PersonID);
                 workSheet.Cells[1, 2].Value = nameof(PersonResponse.PersonName);

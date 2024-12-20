@@ -5,10 +5,13 @@ using System.Linq.Expressions;
 
 namespace Repository {
     public class PersonRepository : IPersonRepository {
+
         private readonly ApplicationDbContext _db;
+
         public PersonRepository(ApplicationDbContext applicationDbContext) {
             _db = applicationDbContext;
         }
+
         public async Task<Person> AddPerson(Person person) {
             await _db.Persons.AddAsync(person);
             await _db.SaveChangesAsync();
@@ -24,21 +27,6 @@ namespace Repository {
                 await _db.SaveChangesAsync();
                 return true;
             }
-        }
-
-        public async Task<List<Person>> GetAllPerson() {
-            return await _db.Persons.Include(nameof(Person.Country)).ToListAsync();
-        }
-
-        public async Task<List<Person>> GetFilterPerson(Expression<Func<Person, bool>> predicate) {
-            return await _db.Persons.Include(nameof(Person.Country))
-                .Where(predicate)
-                .ToListAsync();
-        }
-
-        public async Task<Person?> GetPersonByID(Guid personID) {
-            return await _db.Persons.Include(nameof(Person.Country))
-                .FirstOrDefaultAsync(p => p.PersonID == personID);
         }
 
         public async Task<Person> UpdatePerson(Person person) {
@@ -57,5 +45,21 @@ namespace Repository {
                 return matchPerson;
             }
         }
+
+        public async Task<Person?> GetPersonByID(Guid personID) {
+            return await _db.Persons.Include(nameof(Person.Country))
+                .FirstOrDefaultAsync(p => p.PersonID == personID);
+        }
+
+        public async Task<List<Person>> GetAllPerson() {
+            return await _db.Persons.Include(nameof(Person.Country)).ToListAsync();
+        }
+
+        public async Task<List<Person>> GetFilterPerson(Expression<Func<Person, bool>> predicate) {
+            return await _db.Persons.Include(nameof(Person.Country))
+                .Where(predicate)
+                .ToListAsync();
+        }
+
     }
 }
