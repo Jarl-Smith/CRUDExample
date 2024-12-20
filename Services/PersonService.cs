@@ -55,45 +55,29 @@ namespace Services {
         }
 
         public async Task<List<PersonResponse>> GetFilterPerson(string searchBy, string? searchString) {
-            List<PersonResponse> allPerson = await GetAllPerson();
-            List<PersonResponse> matchingPerson = allPerson;
-            if(string.IsNullOrEmpty(searchBy) || string.IsNullOrEmpty(searchString)) { return allPerson; }
-
-            switch(searchBy) {
-                case nameof(PersonResponse.PersonName):
-                    matchingPerson = allPerson.Where(
-                        (person) => {
-                            if(string.IsNullOrEmpty(person.PersonName)) {
-                                return true;
-                            } else {
-                                return person.PersonName.Contains(searchString, StringComparison.OrdinalIgnoreCase);
-                            }
-                        }).ToList();
-                    break;
-                case nameof(PersonResponse.Email):
-                    matchingPerson = allPerson.Where(
-                        (person) => {
-                            if(string.IsNullOrEmpty(person.Email)) {
-                                return true;
-                            } else {
-                                return person.Email.Contains(searchString, StringComparison.OrdinalIgnoreCase);
-                            }
-                        }).ToList();
-                    break;
-                case nameof(PersonResponse.DateOfBirth):
-                    matchingPerson = allPerson.Where(
-                        (person) => {
-                            if(person.DateOfBirth == null) {
-                                return false;
-                            } else {
-                                return person.DateOfBirth.Value.ToString("dd MMMM yyyy").Contains(searchString, StringComparison.OrdinalIgnoreCase);
-                            }
-                        }).ToList();
-                    break;
-                default:
-                    break;
+            if(string.IsNullOrEmpty(searchBy) || string.IsNullOrEmpty(searchString)) {//搜索的字段或者搜索关键字为空，则直接返回所有
+                return (await _personRepository.GetAllPerson()).Select(temp => temp.ToPersonResponse()).ToList();
+            } else {
+                List<Person> tempList;
+                switch(searchBy) {
+                    case nameof(PersonResponse.PersonName)://根据PersonName进行关键字搜索，返回匹配成功的结果
+                        tempList = await _personRepository.GetFilterPerson(person =>
+                        string.IsNullOrEmpty(person.PersonName) ? true : person.PersonName.Contains(searchString, StringComparison.OrdinalIgnoreCase));
+                        break;
+                    case nameof(PersonResponse.Email)://根据Email进行关键字搜索，返回匹配成功的结果
+                        tempList = await _personRepository.GetFilterPerson(person =>
+                        string.IsNullOrEmpty(person.Email) ? true : person.Email.Contains(searchString, StringComparison.OrdinalIgnoreCase));
+                        break;
+                    case nameof(PersonResponse.DateOfBirth)://同理
+                        tempList = await _personRepository.GetFilterPerson(person =>
+                        person.DateOfBirth == null ? false : person.DateOfBirth.Value.ToString("dd MMMM yyyy").Contains(searchString, StringComparison.OrdinalIgnoreCase));
+                        break;
+                    default:
+                        tempList = await _personRepository.GetAllPerson();
+                        break;
+                }
+                return tempList.Select(temp => temp.ToPersonResponse()).ToList();
             }
-            return matchingPerson;
         }
 
         public async Task<List<PersonResponse>> GetSortedPerson(List<PersonResponse> allPerson, string sortBy, SortOrderOption sortOrderOption) {
