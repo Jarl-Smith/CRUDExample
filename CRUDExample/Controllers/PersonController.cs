@@ -11,10 +11,12 @@ namespace CRUDExample.Controllers {
 
         private readonly IPersonService _personService;
         private readonly ICountryService _countryService;
+        private readonly ILogger<PersonController> _logger;
 
-        public PersonController(IPersonService personService, ICountryService countryService) {
+        public PersonController(IPersonService personService, ICountryService countryService, ILogger<PersonController> logger) {
             _personService = personService;
             _countryService = countryService;
+            _logger = logger;
         }
 
         [Route("/")]
