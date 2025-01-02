@@ -40,8 +40,8 @@ namespace CRUDExample {
             builder.Services.AddScoped<IPersonService, PersonService>();
 
             var app = builder.Build();
-            app.UseHttpLogging();//开启httplog功能
-            app.UseStaticFiles();//开启静态文件功能
+            app.UseHttpLogging();//开启httplog中间件
+            app.UseStaticFiles();//开启静态文件中间件
             app.UseRouting();
             app.MapControllers();
             app.Run();
