@@ -1,5 +1,5 @@
 ﻿using Entities;
-using Microsoft.EntityFrameworkCore;
+using SerilogTimings;
 using OfficeOpenXml;
 using ServiceContracts;
 using ServiceContracts.DataTransferObject;
@@ -21,9 +21,12 @@ namespace Services {
             //Model validations
             ValidationHelper.ModelValidation(personAddRequest);
 
-            Person person = personAddRequest.ToPerson();
-            person.PersonID = Guid.NewGuid();
-            await _personRepository.AddPerson(person);
+            Person person;
+            using(Operation.Time("Time for AddPerson from database")) {
+                person = personAddRequest.ToPerson();
+                person.PersonID = Guid.NewGuid();
+                await _personRepository.AddPerson(person);
+            }
             return person.ToPersonResponse();
         }
 
@@ -38,69 +41,84 @@ namespace Services {
             if(personUpdateRequest == null) { throw new ArgumentNullException(nameof(personUpdateRequest)); }
             ValidationHelper.ModelValidation(personUpdateRequest);
 
-            if(await _personRepository.GetPersonByID(personUpdateRequest.PersonID) == null) { throw new ArgumentException("Given id doesn't exist"); }
-            Person updatedPerson = await _personRepository.UpdatePerson(personUpdateRequest.ToPerson());
+            Person updatedPerson;
+            using(Operation.Time("Time for UpdatePerson from database")) {
+                if(await _personRepository.GetPersonByID(personUpdateRequest.PersonID) == null) { throw new ArgumentException("Given id doesn't exist"); }
+                updatedPerson = await _personRepository.UpdatePerson(personUpdateRequest.ToPerson());
+            }
             return updatedPerson.ToPersonResponse();
         }
 
         public async Task<PersonResponse?> GetPersonByPersonID(Guid? guid) {
             if(guid == null) return null;
-            Person? p = await _personRepository.GetPersonByID(guid.Value);
+
+            Person? p;
+            using(Operation.Time("Time for GetPersonByPersonID from database")) {
+                p = await _personRepository.GetPersonByID(guid.Value);
+            }
             return p?.ToPersonResponse();
         }
 
         public async Task<List<PersonResponse>> GetAllPerson() {
-            List<Person> persons = await _personRepository.GetAllPerson();
-            return persons.Select(p => p.ToPersonResponse()).ToList();
+            List<Person> person;
+            using(Operation.Time("Time form GetAllPerson from database")) {
+                person = await _personRepository.GetAllPerson();
+            }
+            return person.Select(p => p.ToPersonResponse()).ToList();
         }
 
         public async Task<List<PersonResponse>> GetFilterPerson(string searchBy, string? searchString) {
-            if(string.IsNullOrEmpty(searchBy) || string.IsNullOrEmpty(searchString)) {//搜索的字段或者搜索关键字为空，则直接返回所有
-                return (await _personRepository.GetAllPerson()).Select(temp => temp.ToPersonResponse()).ToList();
-            } else {
-                List<Person> tempList;
-                switch(searchBy) {
-                    case nameof(PersonResponse.PersonName)://根据PersonName进行关键字搜索，返回匹配成功的结果
-                        tempList = await _personRepository.GetFilterPerson(person =>
-                        string.IsNullOrEmpty(person.PersonName) ? true : person.PersonName.Contains(searchString, StringComparison.OrdinalIgnoreCase));
-                        break;
-                    case nameof(PersonResponse.Email)://根据Email进行关键字搜索，返回匹配成功的结果
-                        tempList = await _personRepository.GetFilterPerson(person =>
-                        string.IsNullOrEmpty(person.Email) ? true : person.Email.Contains(searchString, StringComparison.OrdinalIgnoreCase));
-                        break;
-                    case nameof(PersonResponse.DateOfBirth)://同理
-                        tempList = await _personRepository.GetFilterPerson(person =>
-                        person.DateOfBirth == null ? false : person.DateOfBirth.Value.ToString("dd MMMM yyyy").Contains(searchString, StringComparison.OrdinalIgnoreCase));
-                        break;
-                    default:
-                        tempList = await _personRepository.GetAllPerson();
-                        break;
+            List<Person> tempList;
+            using(Operation.Time("Time for GetFilterPerson from database")) {
+                if(string.IsNullOrEmpty(searchBy) || string.IsNullOrEmpty(searchString)) {//搜索的字段或者搜索关键字为空，则直接返回所有
+                    return (await _personRepository.GetAllPerson()).Select(temp => temp.ToPersonResponse()).ToList();
+                } else {
+                    switch(searchBy) {
+                        case nameof(PersonResponse.PersonName)://根据PersonName进行关键字搜索，返回匹配成功的结果
+                            tempList = await _personRepository.GetFilterPerson(person =>
+                            string.IsNullOrEmpty(person.PersonName) ? true : person.PersonName.Contains(searchString, StringComparison.OrdinalIgnoreCase));
+                            break;
+                        case nameof(PersonResponse.Email)://根据Email进行关键字搜索，返回匹配成功的结果
+                            tempList = await _personRepository.GetFilterPerson(person =>
+                            string.IsNullOrEmpty(person.Email) ? true : person.Email.Contains(searchString, StringComparison.OrdinalIgnoreCase));
+                            break;
+                        case nameof(PersonResponse.DateOfBirth)://同理
+                            tempList = await _personRepository.GetFilterPerson(person =>
+                            person.DateOfBirth == null ? false : person.DateOfBirth.Value.ToString("dd MMMM yyyy").Contains(searchString, StringComparison.OrdinalIgnoreCase));
+                            break;
+                        default:
+                            tempList = await _personRepository.GetAllPerson();
+                            break;
+                    }
                 }
-                return tempList.Select(temp => temp.ToPersonResponse()).ToList();
             }
+            return tempList.Select(temp => temp.ToPersonResponse()).ToList();
         }
 
         public async Task<List<PersonResponse>> GetSortedPerson(List<PersonResponse> allPerson, string sortBy, SortOrderOption sortOrderOption) {
-            List<PersonResponse> sortPerson = (sortBy, sortOrderOption)
-            switch {
-                (nameof(PersonResponse.PersonName), SortOrderOption.ASC) => allPerson.OrderBy(temp => temp.PersonName, StringComparer.OrdinalIgnoreCase).ToList(),
-                (nameof(PersonResponse.PersonName), SortOrderOption.DESC) => allPerson.OrderByDescending(temp => temp.PersonName, StringComparer.OrdinalIgnoreCase).ToList(),
-                (nameof(PersonResponse.Email), SortOrderOption.ASC) => allPerson.OrderBy(temp => temp.Email, StringComparer.OrdinalIgnoreCase).ToList(),
-                (nameof(PersonResponse.Email), SortOrderOption.DESC) => allPerson.OrderByDescending(temp => temp.Email, StringComparer.OrdinalIgnoreCase).ToList(),
-                (nameof(PersonResponse.DateOfBirth), SortOrderOption.ASC) => allPerson.OrderBy(temp => temp.DateOfBirth).ToList(),
-                (nameof(PersonResponse.DateOfBirth), SortOrderOption.DESC) => allPerson.OrderByDescending(temp => temp.DateOfBirth).ToList(),
-                (nameof(PersonResponse.Gender), SortOrderOption.ASC) => allPerson.OrderBy(temp => temp.Gender, StringComparer.OrdinalIgnoreCase).ToList(),
-                (nameof(PersonResponse.Gender), SortOrderOption.DESC) => allPerson.OrderByDescending(temp => temp.Gender, StringComparer.OrdinalIgnoreCase).ToList(),
-                (nameof(PersonResponse.Country), SortOrderOption.ASC) => allPerson.OrderBy(temp => temp.Country, StringComparer.OrdinalIgnoreCase).ToList(),
-                (nameof(PersonResponse.Country), SortOrderOption.DESC) => allPerson.OrderByDescending(temp => temp.Country, StringComparer.OrdinalIgnoreCase).ToList(),
-                (nameof(PersonResponse.Address), SortOrderOption.ASC) => allPerson.OrderBy(temp => temp.Address, StringComparer.OrdinalIgnoreCase).ToList(),
-                (nameof(PersonResponse.Address), SortOrderOption.DESC) => allPerson.OrderByDescending(temp => temp.Address, StringComparer.OrdinalIgnoreCase).ToList(),
-                (nameof(PersonResponse.ReceiveNewsLetters), SortOrderOption.ASC) => allPerson.OrderBy(temp => temp.ReceiveNewsLetters).ToList(),
-                (nameof(PersonResponse.ReceiveNewsLetters), SortOrderOption.DESC) => allPerson.OrderByDescending(temp => temp.ReceiveNewsLetters).ToList(),
-                (nameof(PersonResponse.Age), SortOrderOption.ASC) => allPerson.OrderBy(temp => temp.Age).ToList(),
-                (nameof(PersonResponse.Age), SortOrderOption.DESC) => allPerson.OrderByDescending(temp => temp.Age).ToList(),
-                _ => allPerson
-            };
+            List<PersonResponse> sortPerson;
+            using(Operation.Time("Time for GetSortedPerson from database")) {
+                sortPerson = (sortBy, sortOrderOption)
+                switch {
+                    (nameof(PersonResponse.PersonName), SortOrderOption.ASC) => allPerson.OrderBy(temp => temp.PersonName, StringComparer.OrdinalIgnoreCase).ToList(),
+                    (nameof(PersonResponse.PersonName), SortOrderOption.DESC) => allPerson.OrderByDescending(temp => temp.PersonName, StringComparer.OrdinalIgnoreCase).ToList(),
+                    (nameof(PersonResponse.Email), SortOrderOption.ASC) => allPerson.OrderBy(temp => temp.Email, StringComparer.OrdinalIgnoreCase).ToList(),
+                    (nameof(PersonResponse.Email), SortOrderOption.DESC) => allPerson.OrderByDescending(temp => temp.Email, StringComparer.OrdinalIgnoreCase).ToList(),
+                    (nameof(PersonResponse.DateOfBirth), SortOrderOption.ASC) => allPerson.OrderBy(temp => temp.DateOfBirth).ToList(),
+                    (nameof(PersonResponse.DateOfBirth), SortOrderOption.DESC) => allPerson.OrderByDescending(temp => temp.DateOfBirth).ToList(),
+                    (nameof(PersonResponse.Gender), SortOrderOption.ASC) => allPerson.OrderBy(temp => temp.Gender, StringComparer.OrdinalIgnoreCase).ToList(),
+                    (nameof(PersonResponse.Gender), SortOrderOption.DESC) => allPerson.OrderByDescending(temp => temp.Gender, StringComparer.OrdinalIgnoreCase).ToList(),
+                    (nameof(PersonResponse.Country), SortOrderOption.ASC) => allPerson.OrderBy(temp => temp.Country, StringComparer.OrdinalIgnoreCase).ToList(),
+                    (nameof(PersonResponse.Country), SortOrderOption.DESC) => allPerson.OrderByDescending(temp => temp.Country, StringComparer.OrdinalIgnoreCase).ToList(),
+                    (nameof(PersonResponse.Address), SortOrderOption.ASC) => allPerson.OrderBy(temp => temp.Address, StringComparer.OrdinalIgnoreCase).ToList(),
+                    (nameof(PersonResponse.Address), SortOrderOption.DESC) => allPerson.OrderByDescending(temp => temp.Address, StringComparer.OrdinalIgnoreCase).ToList(),
+                    (nameof(PersonResponse.ReceiveNewsLetters), SortOrderOption.ASC) => allPerson.OrderBy(temp => temp.ReceiveNewsLetters).ToList(),
+                    (nameof(PersonResponse.ReceiveNewsLetters), SortOrderOption.DESC) => allPerson.OrderByDescending(temp => temp.ReceiveNewsLetters).ToList(),
+                    (nameof(PersonResponse.Age), SortOrderOption.ASC) => allPerson.OrderBy(temp => temp.Age).ToList(),
+                    (nameof(PersonResponse.Age), SortOrderOption.DESC) => allPerson.OrderByDescending(temp => temp.Age).ToList(),
+                    _ => allPerson
+                };
+            }
             return sortPerson;
         }
 
