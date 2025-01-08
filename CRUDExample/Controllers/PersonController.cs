@@ -25,20 +25,6 @@ namespace CRUDExample.Controllers {
         [TypeFilter<PersonListActionFilter>]
         //通过Asp.Net Core的QueryString Binding，接收客户发送的请求，按照请求进行筛选+排序，并返回结果
         public async Task<IActionResult> Index(string searchBy, string? searchString, string sortBy = nameof(PersonResponse.PersonName), SortOrderOption sortOrderOption = SortOrderOption.ASC) {
-            ViewBag.CurrentSearchBy = searchBy;
-            ViewBag.CurrentSearchString = searchString;
-            ViewBag.CurrentSortBy = sortBy;
-            ViewBag.CurrentSortOrderOption = sortOrderOption.ToString();
-            ViewBag.ColumnNameAndProperty = new Dictionary<string, string>() {
-                {"Person Name",nameof(PersonResponse.PersonName) },
-                {"Email", nameof(PersonResponse.Email) },
-                {"Date Of Birth", nameof(PersonResponse.DateOfBirth) },
-                {"Gender", nameof(PersonResponse.Gender) },
-                {"Country", nameof(PersonResponse.Country) },
-                {"Address", nameof(PersonResponse.Address) },
-                {"Receive News Letters", nameof(PersonResponse.ReceiveNewsLetters) },
-                {"Age", nameof(PersonResponse.Age) }
-            };
             List<PersonResponse> filterPerson = await _personService.GetFilterPerson(searchBy, searchString);
             List<PersonResponse> sortedPerson = await _personService.GetSortedPerson(filterPerson, sortBy, sortOrderOption);
             return View(sortedPerson);
