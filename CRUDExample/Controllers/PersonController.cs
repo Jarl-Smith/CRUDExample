@@ -40,15 +40,12 @@ namespace CRUDExample.Controllers {
 
         [Route("[action]")]
         [HttpPost]
+        [TypeFilter(typeof(PersonCreateAndEditPostActionFilter))]
         //通过Asp.Net Core的model binding，接收用户的数据，对model进行验证，验证不通过将验证结果返回，验证通过执行添加操作并返回主界面
-        public async Task<IActionResult> Create(PersonAddRequest? personAddRequest) {
-            if(!ModelState.IsValid) {
-                ViewBag.Countries = await _countryService.GetAllCountries();
-                ViewBag.Errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
-                return View();
-            }
-            PersonResponse personResponse = await _personService.AddPerson(personAddRequest);
-            return RedirectToAction("Index", "Person");
+        public async Task<IActionResult> Create(PersonAddRequest? personRequest) {
+
+            PersonResponse personResponse = await _personService.AddPerson(personRequest);
+            return RedirectToAction("Index");
         }
 
         [HttpGet]
@@ -66,17 +63,13 @@ namespace CRUDExample.Controllers {
 
         [HttpPost]
         [Route("[action]/{personID}")]
-        public async Task<IActionResult> Edit(PersonUpdateRequest personUpdateRequest) {
-            PersonResponse? personResponse = await _personService.GetPersonByPersonID(personUpdateRequest.PersonID);
+        [TypeFilter(typeof(PersonCreateAndEditPostActionFilter))]
+        public async Task<IActionResult> Edit(PersonUpdateRequest personRequest) {
+            PersonResponse? personResponse = await _personService.GetPersonByPersonID(personRequest.PersonID);
             if(personResponse == null) { return RedirectToAction("Index"); }
-            if(!ModelState.IsValid) {
-                ViewBag.Countries = _countryService.GetAllCountries();
-                ViewBag.Errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
-                return View(personUpdateRequest);
-            } else {
-                await _personService.UpdatePerson(personUpdateRequest);
-                return RedirectToAction("Index");
-            }
+
+            await _personService.UpdatePerson(personRequest);
+            return RedirectToAction("Index");
         }
 
         [HttpGet]
