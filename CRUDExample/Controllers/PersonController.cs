@@ -1,4 +1,6 @@
 ﻿using CRUDExample.Filters.ActionFilters;
+using CRUDExample.Filters.AuthorizationFilters;
+using CRUDExample.Filters.ResultFilters;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using ServiceContracts;
@@ -22,7 +24,8 @@ namespace CRUDExample.Controllers {
 
         [Route("/")]
         [Route("[action]")]
-        [TypeFilter<PersonListActionFilter>]
+        [TypeFilter(typeof(PersonListActionFilter))]
+        [TypeFilter(typeof(PersonListResultFilter))]
         //通过Asp.Net Core的QueryString Binding，接收客户发送的请求，按照请求进行筛选+排序，并返回结果
         public async Task<IActionResult> Index(string searchBy, string? searchString, string sortBy = nameof(PersonResponse.PersonName), SortOrderOption sortOrderOption = SortOrderOption.ASC) {
             List<PersonResponse> filterPerson = await _personService.GetFilterPerson(searchBy, searchString);
@@ -50,6 +53,7 @@ namespace CRUDExample.Controllers {
 
         [HttpGet]
         [Route("[action]/{personID}")]//Eg:person/edit/afea1654
+        [TypeFilter(typeof(TokenResultFilter))]
         public async Task<IActionResult> Edit(Guid personID) {
             PersonResponse? personResponse = await _personService.GetPersonByPersonID(personID);
             if(personResponse == null) {
@@ -64,6 +68,7 @@ namespace CRUDExample.Controllers {
         [HttpPost]
         [Route("[action]/{personID}")]
         [TypeFilter(typeof(PersonCreateAndEditPostActionFilter))]
+        [TypeFilter(typeof(TokenAuthorizationFilter))]
         public async Task<IActionResult> Edit(PersonUpdateRequest personRequest) {
             PersonResponse? personResponse = await _personService.GetPersonByPersonID(personRequest.PersonID);
             if(personResponse == null) { return RedirectToAction("Index"); }

@@ -20,12 +20,10 @@ namespace CRUDExample.Filters.ActionFilters {
                     personController.ViewBag.Countries = countryResponses.Select(temp => new SelectListItem() { Text = temp.CountryName, Value = temp.CountryID.ToString() });
                     personController.ViewBag.Errors = personController.ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
                     context.Result = personController.View(context.ActionArguments["personRequest"]);
-                } else {
-                    await next();
+                    return;
                 }
-            } else {
-                await next();
             }
+            await next();
         }
     }
 }
